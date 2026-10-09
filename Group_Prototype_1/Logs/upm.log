@@ -1,0 +1,30 @@
+[2026-10-09T15:59:10.621Z][INFO] Command-line: 'C:\\Program Files\\Unity\\Hub\\Editor\\6000.6.3f1\\Editor\\Data\\Resources\\PackageManager\\Server\\UnityPackageManager.exe' server -s 18260 --ipc-path Unity-Upm-18260 -l 2 --log-file C:\\Users\\pmaxi\\Documents\\GitHub\\COMP376_Team_Group_P1\\Group_Prototype_1/Logs/upm.log
+[2026-10-09T15:59:10.992Z][INFO] IPC server started (IPC path=Unity-Upm-18260).
+[2026-10-09T15:59:10.993Z][INFO] Hint: To connect to this UPM instance, launch Unity with the command-line parameter -upmIpcPath Upm-18260.
+[2026-10-09T15:59:19.710Z][INFO] project:list-packages <-- Request received
+params: {}
+[2026-10-09T15:59:20.353Z][INFO] config:project:get-registries <-- Request received
+params: {}
+[2026-10-09T15:59:20.625Z][INFO] config:project:get-registries --> 200 (271 ms)
+[2026-10-09T15:59:23.460Z][INFO] project:list-packages <-- Request received
+params: {}
+[2026-10-09T15:59:24.281Z][INFO] project:list-packages --> 200 (4571 ms)
+[2026-10-09T15:59:26.109Z][INFO] project:list-packages --> 200 (2650 ms)
+[2026-10-09T16:04:23.125Z][INFO] project:list-packages <-- Request received
+params: {}
+[2026-10-09T16:04:23.289Z][INFO] project:list-packages <-- Request received
+params: {}
+[2026-10-09T16:04:25.428Z][INFO] project:list-packages --> 200 (2138 ms)
+[2026-10-09T16:04:25.434Z][INFO] project:list-packages --> 200 (2322 ms)
+[2026-10-09T16:04:26.143Z][INFO] project:list-packages <-- Request received
+params: {}
+[2026-10-09T16:04:27.001Z][INFO] config:project:get-registries <-- Request received
+params: {}
+[2026-10-09T16:04:27.100Z][INFO] config:project:get-registries --> 200 (100 ms)
+[2026-10-09T16:04:28.033Z][INFO] project:list-packages --> 200 (1890 ms)
+[2026-10-09T16:04:46.288Z][INFO] project:list-packages <-- Request received
+params: {}
+[2026-10-09T16:04:47.830Z][INFO] project:list-packages --> 200 (1542 ms)
+[2026-10-09T16:05:00.727Z][INFO] project:list-packages <-- Request received
+params: {}
+[2026-10-09T16:05:02.548Z][INFO] project:list-packages --> 200 (1821 ms)
