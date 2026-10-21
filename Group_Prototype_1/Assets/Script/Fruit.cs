@@ -21,9 +21,14 @@ public class Fruit : MonoBehaviour
 
         collected = true;
 
-        Debug.Log("Fruit collected!");
+Debug.Log("Fruit collected!");
 
-        // Remove the fruit from the scene.
-        Destroy(gameObject);
+if (GameManager.Instance != null)
+{
+    GameManager.Instance.CollectApple();
+}
+
+// Remove the fruit from the scene.
+Destroy(gameObject);
     }
 }
