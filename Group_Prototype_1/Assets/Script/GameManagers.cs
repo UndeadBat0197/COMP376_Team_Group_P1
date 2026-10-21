@@ -6,10 +6,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    // Remembers whether the player has already passed
-    // the start menu during this play session.
-    private static bool hasStartedOnce = false;
-
     private int applesCollected = 0;
     private int totalApples;
 
@@ -62,16 +58,9 @@ public class GameManager : MonoBehaviour
         // Set initial apple counter.
         UpdateAppleText();
 
-        // Only show the start menu the first time.
-        if (!hasStartedOnce)
-        {
-            ShowStartMenu();
-        }
-        else
-        {
-            // After death/restart, immediately start gameplay.
-            StartGameplay();
-        }
+        // Show the start menu whenever the scene loads.
+        // This includes launching the game or restarting.
+        ShowStartMenu();
     }
 
     void Update()
@@ -153,10 +142,6 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        // Remember that the player has already
-        // passed the start menu.
-        hasStartedOnce = true;
-
         StartGameplay();
     }
 
@@ -471,7 +456,7 @@ public class GameManager : MonoBehaviour
         instructionsText.text =
             "WASD - Move\n" +
             "Q / R - Rotate\n" +
-            "ESC - Pause";
+            "ESC - Open Menu";
 
         RectTransform instructionsRect =
             instructionsText.rectTransform;
@@ -616,7 +601,7 @@ public class GameManager : MonoBehaviour
         pauseInstructionsText.text =
             "WASD - Move\n" +
             "Q / R - Rotate\n" +
-            "ESC - Pause";
+            "ESC - Close Menu";
 
         RectTransform pauseInstructionsRect =
             pauseInstructionsText.rectTransform;
