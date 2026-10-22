@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
 
     private GameObject startMenu;
     private GameObject pauseMenu;
+    private GameObject winRestartButton;
 
     private bool gameStarted = false;
     private bool gameWon = false;
@@ -166,6 +167,7 @@ public class GameManager : MonoBehaviour
 
         startMenu.SetActive(false);
         pauseMenu.SetActive(false);
+        winRestartButton.SetActive(false);
 
         // Start/resume gameplay.
         Time.timeScale = 1f;
@@ -185,6 +187,9 @@ public class GameManager : MonoBehaviour
 
         winText.text = "YOU WIN!";
         winText.gameObject.SetActive(true);
+
+        // Show Restart button.
+        winRestartButton.SetActive(true);
 
         // Freeze the game.
         Time.timeScale = 0f;
@@ -338,7 +343,6 @@ public class GameManager : MonoBehaviour
             );
 
         winText.fontSize = 70;
-
         winText.alignment =
             TextAnchor.MiddleCenter;
 
@@ -357,12 +361,27 @@ public class GameManager : MonoBehaviour
             new Vector2(0.5f, 0.5f);
 
         winRect.anchoredPosition =
-            Vector2.zero;
+            new Vector2(0, 60);
 
         winRect.sizeDelta =
             new Vector2(600, 150);
 
         winObject.SetActive(false);
+
+
+        // =====================================
+        // Win Restart Button
+        // =====================================
+
+        winRestartButton =
+            CreateButton(
+                canvasObject.transform,
+                "Restart",
+                new Vector2(0, -70),
+                RestartGame
+            );
+
+        winRestartButton.SetActive(false);
 
 
         // =====================================
@@ -417,7 +436,6 @@ public class GameManager : MonoBehaviour
             );
 
         titleText.fontSize = 60;
-
         titleText.alignment =
             TextAnchor.MiddleCenter;
 
@@ -675,7 +693,7 @@ public class GameManager : MonoBehaviour
     // Button Creator
     // =========================================
 
-    void CreateButton(
+    GameObject CreateButton(
         Transform parent,
         string buttonText,
         Vector2 position,
@@ -770,5 +788,7 @@ public class GameManager : MonoBehaviour
 
         textRect.offsetMax =
             Vector2.zero;
+
+        return buttonObject;
     }
 }
