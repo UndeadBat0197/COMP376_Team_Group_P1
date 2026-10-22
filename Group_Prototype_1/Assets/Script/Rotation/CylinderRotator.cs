@@ -4,16 +4,14 @@ using UnityEngine;
 public class CylinderRotator : MonoBehaviour
 {
     [Header("Rotation Settings")]
-    public float rotationSpeed = 25f;
-    public float maxAngle = 90f;
+    public float rotationSpeed = 25f;   // degrees per second while a key is held
+    public float maxAngle = 90f;        // limit in each direction from the start rotation
 
     [Header("Controls")]
     public KeyCode counterClockwiseKey = KeyCode.Q;
-    public KeyCode clockwiseKey = KeyCode.R;
+    public KeyCode clockwiseKey = KeyCode.E;
 
     private float currentAngle = 0f;
-    private float targetAngle = 0f;
-
     private Quaternion initialRotation;
 
     void Start()
@@ -23,24 +21,14 @@ public class CylinderRotator : MonoBehaviour
 
     void Update()
     {
-        // Q Counterclockwise rotation
-        if (Input.GetKeyDown(counterClockwiseKey))
-        {
-            targetAngle = maxAngle;
-        }
+        // -1, 0 or +1 depending on which key is held this frame
+        float input = 0f;
+        if (Input.GetKey(counterClockwiseKey)) input += 1f;
+        if (Input.GetKey(clockwiseKey))        input -= 1f;
 
-        // R Clockwise rotation
-        if (Input.GetKeyDown(clockwiseKey))
-        {
-            targetAngle = -maxAngle;
-        }
-
-        // Automatically rotate toward the target
-        currentAngle = Mathf.MoveTowards(
-            currentAngle,
-            targetAngle,
-            rotationSpeed * Time.deltaTime
-        );
+        // Only rotates while a key is held; stops the moment you let go
+        currentAngle += input * rotationSpeed * Time.deltaTime;
+        currentAngle = Mathf.Clamp(currentAngle, -maxAngle, maxAngle);
 
         // Rotate around the cylinder's local Z axis
         transform.localRotation =
