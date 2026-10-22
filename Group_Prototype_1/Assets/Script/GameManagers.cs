@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     private bool gamePaused = false;
 
     private Transform player;
-    private float fallDeathY = -45f;
+    private float fallDeathY = -20f;
     private bool restarting = false;
 
     void Awake()
