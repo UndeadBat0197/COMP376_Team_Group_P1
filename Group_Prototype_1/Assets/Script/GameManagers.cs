@@ -20,14 +20,15 @@ public class GameManager : MonoBehaviour
     private bool gamePaused = false;
 
     private Transform player;
-    private float fallDeathY = -20f;
+
+    private float fallDeathY = -45f;
     private bool restarting = false;
 
     void Awake()
     {
         Instance = this;
 
-        // Make sure time is normal whenever the scene loads.
+        // Always restore normal time when the scene loads.
         Time.timeScale = 1f;
     }
 
@@ -58,9 +59,21 @@ public class GameManager : MonoBehaviour
         // Set initial apple counter.
         UpdateAppleText();
 
-        // Show the start menu whenever the scene loads.
-        // This includes launching the game or restarting.
-        ShowStartMenu();
+        // Check whether this scene load came from our RestartGame().
+        if (PlayerPrefs.GetInt("SkipStartMenu", 0) == 1)
+        {
+            // Clear the flag immediately so it only works once.
+            PlayerPrefs.SetInt("SkipStartMenu", 0);
+            PlayerPrefs.Save();
+
+            // Restart directly into gameplay.
+            StartGameplay();
+        }
+        else
+        {
+            // Normal first launch.
+            ShowStartMenu();
+        }
     }
 
     void Update()
@@ -128,14 +141,15 @@ public class GameManager : MonoBehaviour
     void ShowStartMenu()
     {
         gameStarted = false;
+        gamePaused = false;
 
         startMenu.SetActive(true);
         pauseMenu.SetActive(false);
 
-        // Freeze the game.
+        // Freeze the game while the start menu is open.
         Time.timeScale = 0f;
 
-        // Release the mouse for the Start button.
+        // Release mouse for the Start button.
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -218,6 +232,10 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
+        // Tell the next scene load to skip the start menu.
+        PlayerPrefs.SetInt("SkipStartMenu", 1);
+        PlayerPrefs.Save();
+
         // Restore time before reloading.
         Time.timeScale = 1f;
 
@@ -320,6 +338,7 @@ public class GameManager : MonoBehaviour
             );
 
         winText.fontSize = 70;
+
         winText.alignment =
             TextAnchor.MiddleCenter;
 
@@ -398,6 +417,7 @@ public class GameManager : MonoBehaviour
             );
 
         titleText.fontSize = 60;
+
         titleText.alignment =
             TextAnchor.MiddleCenter;
 
@@ -456,7 +476,7 @@ public class GameManager : MonoBehaviour
         instructionsText.text =
             "WASD - Move\n" +
             "Q / R - Rotate\n" +
-            "ESC - Open Menu";
+            "ESC - Pause";
 
         RectTransform instructionsRect =
             instructionsText.rectTransform;
@@ -571,7 +591,7 @@ public class GameManager : MonoBehaviour
 
 
         // =====================================
-        // Pause Instructions
+        // Pause Menu Instructions
         // =====================================
 
         GameObject pauseInstructionsObject =
@@ -601,7 +621,7 @@ public class GameManager : MonoBehaviour
         pauseInstructionsText.text =
             "WASD - Move\n" +
             "Q / R - Rotate\n" +
-            "ESC - Close Menu";
+            "ESC - Pause";
 
         RectTransform pauseInstructionsRect =
             pauseInstructionsText.rectTransform;
