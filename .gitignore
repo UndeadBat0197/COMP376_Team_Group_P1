@@ -39,3 +39,13 @@ sysinfo.txt
 Icon?
 ehthumbs.db
 Thumbs.db
+
+# Unity generated files
+Group_Prototype_1/[Ll]ibrary/
+Group_Prototype_1/[Tt]emp/
+Group_Prototype_1/[Oo]bj/
+Group_Prototype_1/[Bb]uild/
+Group_Prototype_1/[Bb]uilds/
+Group_Prototype_1/[Ll]ogs/
+Group_Prototype_1/[Uu]serSettings/
+Group_Prototype_1/[Mm]emoryCaptures/
