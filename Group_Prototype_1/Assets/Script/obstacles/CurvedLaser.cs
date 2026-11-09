@@ -58,6 +58,12 @@ public class CurvedLaser : MonoBehaviour
     [Range(0f, 1f)] public float damageFraction = 1f / 3f;
     public LayerMask hitLayers = ~0;
 
+    [Header("Cube blocker (optional)")]
+    [Tooltip("Drag the collider of the special cube here. Only this cube can turn off the laser.")]
+    public Collider blockingCube;
+    [Tooltip("Extra distance beyond the visible beam thickness that lets the cube switch off the WHOLE laser anywhere along its path.")]
+    [Min(0f)] public float blockRadius = 0.4f;
+
     [Header("Blinking (optional)")]
     public bool blink = false;
     public float onDuration = 2f;
@@ -83,6 +89,7 @@ public class CurvedLaser : MonoBehaviour
         radius = Mathf.Max(0.01f, radius);
         onDuration = Mathf.Max(0f, onDuration);
         offDuration = Mathf.Max(0f, offDuration);
+        blockRadius = Mathf.Max(0f, blockRadius);
 
         // Keep the arc between 1 and 360 degrees long.
         endAngle = Mathf.Clamp(endAngle, startAngle + 1f, startAngle + 360f);
@@ -112,7 +119,7 @@ public class CurvedLaser : MonoBehaviour
         if (!Application.isPlaying)
             return;
 
-        UpdateBlink();
+        UpdateLaserState();
 
         if (IsOn)
             CheckForPlayer();
@@ -253,20 +260,51 @@ public class CurvedLaser : MonoBehaviour
         return defaultMaterial;
     }
 
-    void UpdateBlink()
+    // The original blinking logic and the cube blocker both control the same beam.
+    // Because both the renderer and damage depend on IsOn, a blocked laser is harmless.
+    void UpdateLaserState()
     {
-        bool shouldBeOn = true;
+        bool blinkAllowsOn = true;
         if (blink && onDuration + offDuration > 0f)
         {
             float t = Mathf.Repeat(Time.time + timeOffset, onDuration + offDuration);
-            shouldBeOn = t < onDuration;
+            blinkAllowsOn = t < onDuration;
         }
 
-        if (shouldBeOn != IsOn)
+        IsOn = blinkAllowsOn && !CubeBlocksBeam();
+        line.enabled = IsOn;
+    }
+
+    // A single designated cube can switch off the ENTIRE curved beam by
+    // touching any segment of its visible path (including trimmed arcs).
+    bool CubeBlocksBeam()
+    {
+        if (blockingCube == null || !blockingCube.enabled ||
+            !blockingCube.gameObject.activeInHierarchy || path.Count < 2)
+            return false;
+
+        // The laser and cylinder may have rotated this frame. Ensure physics
+        // collider queries use the latest positions before checking the cube.
+        Physics.SyncTransforms();
+
+        float contactRadius = Mathf.Max(0.01f, thickness * 0.5f + blockRadius);
+
+        for (int i = 0; i < path.Count - 1; i++)
         {
-            IsOn = shouldBeOn;
-            line.enabled = IsOn;
+            // Check the curved beam piece by piece, not just its first point.
+            // QueryTriggerInteraction.Collide also supports a trigger cube.
+            Collider[] overlaps = Physics.OverlapCapsule(
+                path[i], path[i + 1], contactRadius, ~0,
+                QueryTriggerInteraction.Collide);
+
+            foreach (Collider hit in overlaps)
+            {
+                if (hit == blockingCube)
+                    return true;
+            }
         }
+
+        return false;
     }
 
     // ---------------- Damage ----------------
@@ -323,6 +361,17 @@ public class CurvedLaser : MonoBehaviour
         UnityEditor.EditorUtility.SetDirty(this);
         UnityEditor.Selection.activeGameObject = p;
 #endif
+    }
+
+    // When selected, highlight the entire beam path that can be blocked.
+    void OnDrawGizmosSelected()
+    {
+        if (blockingCube == null || path.Count < 2)
+            return;
+
+        Gizmos.color = Color.cyan;
+        for (int i = 0; i < path.Count - 1; i++)
+            Gizmos.DrawLine(path[i], path[i + 1]);
     }
 
     void OnDrawGizmos()
