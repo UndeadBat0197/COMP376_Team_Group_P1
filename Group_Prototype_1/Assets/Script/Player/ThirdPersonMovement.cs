@@ -12,9 +12,13 @@ public class ThirdPersonMovement : MonoBehaviour
     public float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
 
+    [Header("Pushable Objects")]
+    [Tooltip("How strongly the character pushes physics objects by walking into them.")]
+    public float pushAcceleration = 12f;
+
     [Header("Jump and Gravity")]
     public float jumpHeight = 4f;
-    public float gravity = (-9.81f)*2f;
+    public float gravity = (-9.81f) * 2f;
 
     // Number of extra jumps allowed in the air
     public int additionalJumps = 0;
@@ -153,6 +157,18 @@ public class ThirdPersonMovement : MonoBehaviour
     // Called by Unity for every surface the CharacterController touches during Move().
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
+        // Push a dynamic Rigidbody sideways when walking into it.
+        // Do not push an object simply by falling onto it.
+        Rigidbody body = hit.collider.attachedRigidbody;
+        if (body != null && !body.isKinematic && hit.moveDirection.y > -0.3f)
+        {
+            Vector3 pushDirection = new Vector3(
+                hit.moveDirection.x, 0f, hit.moveDirection.z);
+            if (pushDirection.sqrMagnitude > 0.01f)
+                body.AddForce(pushDirection.normalized * pushAcceleration,
+                              ForceMode.Acceleration);
+        }
+
         // Only count hits under the player's feet (not walls beside them)
         float feetY = transform.position.y + controller.center.y
                       - controller.height * 0.5f + controller.radius;
