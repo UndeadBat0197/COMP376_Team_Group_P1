@@ -6,70 +6,91 @@ public class ThirdPersonMovement : MonoBehaviour
     [Header("References")]
     public CharacterController controller;
     public Transform cam;
+    public Animator foxAnimator;
 
     [Header("Movement")]
     public float speed = 6f;
-    public float turnSmoothTime = 0.1f;
+    public float runSpeed = 9f;
+    public float turnSmoothTime = 0.3f;
     float turnSmoothVelocity;
 
     [Header("Pushable Objects")]
-    [Tooltip("How strongly the character pushes physics objects by walking into them.")]
+    [Tooltip("How strongly the character pushes physics objects.")]
     public float pushAcceleration = 12f;
 
     [Header("Jump and Gravity")]
     public float jumpHeight = 4f;
-    public float gravity = (-9.81f) * 2f;
-
-    // Number of extra jumps allowed in the air
+    public float gravity = -19.62f;
     public int additionalJumps = 0;
 
-    // Number of jumps already performed
     private int jumpsUsed = 0;
-
-    float verticalVelocity;
+    private float verticalVelocity;
 
     [Header("Falling off steep surfaces")]
-    [Tooltip("If on, surfaces tilted more than Max Stand Angle can't be stood on — " +
-             "normal gravity slides you down and off them.")]
     public bool slideOffSteepSurfaces = true;
 
-    [Tooltip("Steepest surface (in degrees) you can stand on. Flatter = normal grip. " +
-             "Steeper = you slide off. 0 = flat, 90 = wall.")]
-    [Range(1f, 89f)] public float maxStandAngle = 45f;
+    [Range(1f, 89f)]
+    public float maxStandAngle = 45f;
 
-    // Sideways speed picked up while sliding, so you fly off the edge naturally
-    Vector3 slideVelocity;
+    private Vector3 slideVelocity;
+    private Vector3 groundNormal = Vector3.up;
+    private Vector3 lastFrameGroundNormal = Vector3.up;
+    private bool foundGround;
 
-    Vector3 groundNormal = Vector3.up;
-    Vector3 lastFrameGroundNormal = Vector3.up;
-    bool foundGround;
+    // Animation parameters
+    private static readonly int SpeedParam =
+        Animator.StringToHash("speed");
+
+    private static readonly int GroundedParam =
+        Animator.StringToHash("isGrounded");
+
+    private static readonly int JumpParam =
+        Animator.StringToHash("jump");
 
     void Start()
     {
-        // Make "can't walk up it" and "slide off it" use the same angle.
-        if (slideOffSteepSurfaces)
+        if (controller == null)
+            controller = GetComponent<CharacterController>();
+
+        if (cam == null && Camera.main != null)
+            cam = Camera.main.transform;
+
+        if (foxAnimator == null)
+            foxAnimator = GetComponentInChildren<Animator>();
+
+        if (controller != null && slideOffSteepSurfaces)
             controller.slopeLimit = maxStandAngle;
+
+        // Movement is controlled by CharacterController,
+        // not by the animation.
+        if (foxAnimator != null)
+            foxAnimator.applyRootMotion = false;
     }
 
     void Update()
     {
-        // Touching something under our feet?
+        if (controller == null || cam == null)
+            return;
+
+        // Check if grounded
         bool touchingGround = controller.isGrounded;
 
-        // Too steep to stand on?
-        float slope = Vector3.Angle(lastFrameGroundNormal, Vector3.up);
-        bool onSteepSurface = slideOffSteepSurfaces && touchingGround && slope > maxStandAngle;
+        float slope = Vector3.Angle(
+            lastFrameGroundNormal, Vector3.up
+        );
 
-        // Only count as "grounded" if it's a surface we can actually stand on
-        bool grounded = touchingGround && !onSteepSurface;
+        bool onSteepSurface =
+            slideOffSteepSurfaces &&
+            touchingGround &&
+            slope > maxStandAngle;
 
-        // Keep the player grounded
-        if (grounded && verticalVelocity < 0)
-        {
+        bool grounded =
+            touchingGround && !onSteepSurface;
+
+        if (grounded && verticalVelocity < 0f)
             verticalVelocity = -2f;
-        }
 
-        // Get movement input
+        // Movement input
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
@@ -77,8 +98,14 @@ public class ThirdPersonMovement : MonoBehaviour
             horizontal, 0f, vertical
         ).normalized;
 
-        // Rotate and move relative to the camera
-        if (direction.magnitude >= 0.1f)
+        bool isMoving = direction.sqrMagnitude > 0.01f;
+        bool isRunning = isMoving &&
+                         Input.GetKey(KeyCode.LeftShift);
+
+        float currentSpeed = isRunning ? runSpeed : speed;
+
+        // Rotate character relative to camera
+        if (isMoving)
         {
             float targetAngle =
                 Mathf.Atan2(direction.x, direction.z)
@@ -95,18 +122,17 @@ public class ThirdPersonMovement : MonoBehaviour
                 Quaternion.Euler(0f, angle, 0f);
         }
 
-        // Calculate horizontal movement
         Vector3 moveDir =
             Quaternion.Euler(0f, cam.eulerAngles.y, 0f)
             * direction;
 
-        // Reset jumps when touching the ground
+        // Reset jumps
         if (grounded)
-        {
             jumpsUsed = 0;
-        }
 
-        // Jump if we have jumps remaining
+        // Jump
+        bool jumpedThisFrame = false;
+
         if (Input.GetButtonDown("Jump") &&
             jumpsUsed <= additionalJumps)
         {
@@ -114,70 +140,118 @@ public class ThirdPersonMovement : MonoBehaviour
                 Mathf.Sqrt(jumpHeight * -2f * gravity);
 
             jumpsUsed++;
+            jumpedThisFrame = true;
         }
 
-        // Apply gravity (same pull everywhere)
+        // Gravity
         verticalVelocity += gravity * Time.deltaTime;
 
+        // Slope sliding
         if (onSteepSurface)
         {
-            // Gravity pulls straight down, but the surface is in the way,
-            // so the part of the motion going INTO the surface is removed
-            // and what's left slides you down along it.
-            Vector3 v = slideVelocity + Vector3.up * verticalVelocity;
-            float into = Vector3.Dot(v, lastFrameGroundNormal);
+            Vector3 v =
+                slideVelocity +
+                Vector3.up * verticalVelocity;
+
+            float into =
+                Vector3.Dot(v, lastFrameGroundNormal);
+
             if (into < 0f)
                 v -= lastFrameGroundNormal * into;
 
             verticalVelocity = v.y;
-            slideVelocity = new Vector3(v.x, 0f, v.z);
+
+            slideVelocity = new Vector3(
+                v.x, 0f, v.z
+            );
         }
         else if (grounded)
         {
-            // Normal ground: full grip, no sliding.
             slideVelocity = Vector3.zero;
         }
-        // In the air: keep whatever sideways speed we had, so you
-        // carry on off the edge instead of stopping dead.
 
-        // Combine horizontal, sliding and vertical movement
         Vector3 velocity =
-            moveDir * speed
-            + slideVelocity
-            + Vector3.up * verticalVelocity;
+            moveDir * currentSpeed +
+            slideVelocity +
+            Vector3.up * verticalVelocity;
 
-        // Move the CharacterController
-        // (groundNormal is refreshed by OnControllerColliderHit during Move)
         groundNormal = Vector3.up;
         foundGround = false;
+
         controller.Move(velocity * Time.deltaTime);
+
         lastFrameGroundNormal = groundNormal;
+
+        // FOX ANIMATIONS
+        if (foxAnimator != null)
+        {
+            // 0 = Idle
+            // 0.5 = Walk
+            // 1 = Run
+            float animationSpeed = 0f;
+
+            if (isMoving)
+                animationSpeed = isRunning ? 1f : 0.5f;
+
+            foxAnimator.SetFloat(
+                SpeedParam,
+                animationSpeed,
+                0.08f,
+                Time.deltaTime
+            );
+
+            // Optional jump parameters.
+            // Use these if they exist in your Animator.
+            foxAnimator.SetBool(
+                GroundedParam,
+                controller.isGrounded
+            );
+
+            if (jumpedThisFrame)
+                foxAnimator.SetTrigger(JumpParam);
+        }
     }
 
-    // Called by Unity for every surface the CharacterController touches during Move().
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        // Push a dynamic Rigidbody sideways when walking into it.
-        // Do not push an object simply by falling onto it.
-        Rigidbody body = hit.collider.attachedRigidbody;
-        if (body != null && !body.isKinematic && hit.moveDirection.y > -0.3f)
+        Rigidbody body =
+            hit.collider.attachedRigidbody;
+
+        if (body != null &&
+            !body.isKinematic &&
+            hit.moveDirection.y > -0.3f)
         {
             Vector3 pushDirection = new Vector3(
-                hit.moveDirection.x, 0f, hit.moveDirection.z);
+                hit.moveDirection.x,
+                0f,
+                hit.moveDirection.z
+            );
+
             if (pushDirection.sqrMagnitude > 0.01f)
-                body.AddForce(pushDirection.normalized * pushAcceleration,
-                              ForceMode.Acceleration);
+            {
+                body.AddForce(
+                    pushDirection.normalized *
+                    pushAcceleration,
+                    ForceMode.Acceleration
+                );
+            }
         }
 
-        // Only count hits under the player's feet (not walls beside them)
-        float feetY = transform.position.y + controller.center.y
-                      - controller.height * 0.5f + controller.radius;
+        float feetY =
+            transform.position.y +
+            controller.center.y -
+            controller.height * 0.5f +
+            controller.radius;
 
-        if (hit.point.y <= feetY && hit.normal.y > 0.05f)
+        if (hit.point.y <= feetY &&
+            hit.normal.y > 0.05f)
         {
-            // If touching several surfaces, use the flattest one
-            if (!foundGround || hit.normal.y > groundNormal.y)
+            if (!foundGround ||
+                hit.normal.y > groundNormal.y)
+            {
                 groundNormal = hit.normal;
+            }
+
             foundGround = true;
         }
     }
