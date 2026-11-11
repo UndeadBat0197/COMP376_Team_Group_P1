@@ -1,0 +1,99 @@
+[2026-10-21T17:26:32.762Z][INFO] Command-line: 'C:\\Program Files\\Unity\\Hub\\Editor\\6000.6.3f1\\Editor\\Data\\Resources\\PackageManager\\Server\\UnityPackageManager.exe' server -s 36952 --ipc-path Unity-Upm-36952 -l 2 --log-file C:\\Users\\Ferhaan\\Documents\\GitHub\\COMP376_Team_Group_P1/Logs/upm.log
+[2026-10-21T17:26:32.836Z][INFO] IPC server started (IPC path=Unity-Upm-36952).
+[2026-10-21T17:26:32.836Z][INFO] Hint: To connect to this UPM instance, launch Unity with the command-line parameter -upmIpcPath Upm-36952.
+[2026-10-21T17:26:43.416Z][INFO] project:list-packages <-- Request received
+params: {}
+[2026-10-21T17:26:43.420Z][INFO] project:list-packages --> 404 (5 ms)
+[2026-10-21T17:26:43.522Z][INFO] config:project:get-registries <-- Request received
+params: {}
+[2026-10-21T17:26:43.523Z][INFO] config:project:get-registries --> 404 (1 ms)
+[2026-10-21T17:26:44.027Z][INFO] project:list-packages <-- Request received
+params: {}
+[2026-10-21T17:26:44.028Z][INFO] project:list-packages --> 404 (1 ms)
+[2026-10-21T17:26:44.154Z][INFO] project:update-dependencies <-- Request received
+params: {}
+[2026-10-21T17:26:44.208Z][INFO] project:update-dependencies --> 200 (54 ms)
+[2026-10-21T17:26:44.286Z][INFO] project:resolve-packages <-- Request received
+params: {}
+[2026-10-21T17:26:44.710Z][INFO] project:resolve-packages --> 200 (424 ms)
+[2026-10-21T17:26:48.399Z][INFO] project:list-packages <-- Request received
+params: {}
+[2026-10-21T17:26:48.524Z][INFO] project:list-packages <-- Request received
+params: {}
+[2026-10-21T17:26:48.604Z][INFO] project:list-packages --> 200 (205 ms)
+[2026-10-21T17:26:48.681Z][INFO] config:project:get-registries <-- Request received
+params: {}
+[2026-10-21T17:26:48.693Z][INFO] config:project:get-registries --> 200 (12 ms)
+[2026-10-21T17:26:48.710Z][INFO] project:list-packages --> 200 (186 ms)
+[2026-10-21T17:26:51.461Z][INFO] project:list-packages <-- Request received
+params: {}
+[2026-10-21T17:26:51.601Z][INFO] project:list-packages --> 200 (141 ms)
+[2026-10-21T17:26:53.289Z][INFO] packages:get-all-packageinfo <-- Request received
+params: {}
+[2026-10-21T17:26:53.307Z][INFO] packages:get-all-packageinfo <-- Request received
+params: {}
+[2026-10-21T17:26:54.896Z][INFO] project:list-packages <-- Request received
+params: {}
+[2026-10-21T17:26:55.753Z][INFO] packages:get-all-packageinfo --> 200 (2446 ms)
+[2026-10-21T17:26:56.234Z][INFO] packages:get-packageinfo <-- Request received
+params: {
+  "packageId": "com.unity.addressables@2.11.2"
+}
+[2026-10-21T17:26:56.235Z][INFO] packages:get-packageinfo <-- Request received
+params: {
+  "packageId": "com.unity.ads.ios-support@1.0.1"
+}
+[2026-10-21T17:26:56.236Z][INFO] packages:get-packageinfo <-- Request received
+params: {
+  "packageId": "com.unity.mobile.notifications@2.4.3"
+}
+[2026-10-21T17:26:56.300Z][INFO] packages:get-packageinfo <-- Request received
+params: {
+  "packageId": "com.unity.polyspatial.extensions@3.2.2"
+}
+[2026-10-21T17:26:56.300Z][INFO] packages:get-packageinfo <-- Request received
+params: {
+  "packageId": "com.unity.polyspatial.visionos@3.2.2"
+}
+[2026-10-21T17:26:56.301Z][INFO] packages:get-packageinfo <-- Request received
+params: {
+  "packageId": "com.unity.project-auditor-rules@1.0.3"
+}
+[2026-10-21T17:26:56.303Z][INFO] packages:get-packageinfo <-- Request received
+params: {
+  "packageId": "com.unity.scriptablebuildpipeline@3.0.3"
+}
+[2026-10-21T17:26:56.305Z][INFO] packages:get-packageinfo <-- Request received
+params: {
+  "packageId": "com.unity.services.friends@1.1.1"
+}
+[2026-10-21T17:26:56.451Z][INFO] packages:get-packageinfo <-- Request received
+params: {
+  "packageId": "com.unity.services.moderation@1.0.2"
+}
+[2026-10-21T17:26:56.451Z][INFO] packages:get-packageinfo <-- Request received
+params: {
+  "packageId": "com.unity.services.multiplayer@2.3.3"
+}
+[2026-10-21T17:26:56.452Z][INFO] packages:get-packageinfo <-- Request received
+params: {
+  "packageId": "com.unity.web.stripping-tool@1.3.0"
+}
+[2026-10-21T17:26:56.455Z][INFO] packages:get-packageinfo <-- Request received
+params: {
+  "packageId": "com.unity.xr.visionos@3.2.2"
+}
+[2026-10-21T17:26:56.802Z][INFO] packages:get-all-packageinfo --> 200 (3513 ms)
+[2026-10-21T17:26:56.841Z][INFO] project:list-packages --> 200 (1945 ms)
+[2026-10-21T17:26:56.860Z][INFO] packages:get-packageinfo --> 200 (555 ms)
+[2026-10-21T17:26:56.863Z][INFO] packages:get-packageinfo --> 200 (412 ms)
+[2026-10-21T17:26:56.869Z][INFO] packages:get-packageinfo --> 200 (418 ms)
+[2026-10-21T17:26:56.880Z][INFO] packages:get-packageinfo --> 200 (426 ms)
+[2026-10-21T17:26:56.882Z][INFO] packages:get-packageinfo --> 200 (646 ms)
+[2026-10-21T17:26:56.883Z][INFO] packages:get-packageinfo --> 200 (582 ms)
+[2026-10-21T17:26:56.884Z][INFO] packages:get-packageinfo --> 200 (584 ms)
+[2026-10-21T17:26:56.885Z][INFO] packages:get-packageinfo --> 200 (586 ms)
+[2026-10-21T17:26:56.886Z][INFO] packages:get-packageinfo --> 200 (434 ms)
+[2026-10-21T17:26:56.886Z][INFO] packages:get-packageinfo --> 200 (651 ms)
+[2026-10-21T17:26:56.889Z][INFO] packages:get-packageinfo --> 200 (587 ms)
+[2026-10-21T17:26:56.897Z][INFO] packages:get-packageinfo --> 200 (662 ms)
