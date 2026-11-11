@@ -579,10 +579,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2321960414563113262}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 2136b1f222a90df75192ad2fb2187f96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FoxSawPack.SawDamageZone
-  saw: {fileID: 0}
+  saw: {fileID: 3601617837656726670}
+  hitRadius: 1.08
 --- !u!1 &3663481915722551691
 GameObject:
   m_ObjectHideFlags: 0
