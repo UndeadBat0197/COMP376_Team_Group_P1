@@ -493,7 +493,7 @@ public class GameManager : MonoBehaviour
 
         instructionsText.text =
             "WASD - Move\n" +
-            "Q / R - Rotate\n" +
+            "Q / E - Rotate\n" +
             "ESC - Pause";
 
         RectTransform instructionsRect =
@@ -638,7 +638,7 @@ public class GameManager : MonoBehaviour
 
         pauseInstructionsText.text =
             "WASD - Move\n" +
-            "Q / R - Rotate\n" +
+            "Q / E - Rotate\n" +
             "ESC - Pause";
 
         RectTransform pauseInstructionsRect =
