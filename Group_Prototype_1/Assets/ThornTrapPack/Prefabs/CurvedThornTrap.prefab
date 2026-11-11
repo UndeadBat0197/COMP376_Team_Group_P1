@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &332018011710689097
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8323372102736890023}
+  - component: {fileID: 6179007893200246086}
+  m_Layer: 0
+  m_Name: CurvedThornTrap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8323372102736890023
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 332018011710689097}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6179007893200246086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 332018011710689097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02c6934b5355544c49c9c17ca72a4594, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CurvedThornTrap
+  cylinderPivot: {fileID: 0}
+  autoDetectCylinder: 1
+  manualRadius: 15
+  manualCenterOffset: {x: 0, y: 0, z: 0}
+  autoSnap: 1
+  surfaceOffset: 0.06
+  arcLength: 9
+  stripWidth: 2.1
+  spikeCount: 17
+  spikeRows: 2
+  spikeHeight: 1.35
+  spikeBaseRadius: 0.25
+  spikeSides: 6
+  extendedSeconds: 2.5
+  retractedSeconds: 2
+  extendSeconds: 0.35
+  retractSeconds: 0.4
+  timeOffset: 0
+  startExtended: 0
+  damagingExtension: 0.55
+  damage: 1
+  collisionRadius: 0.3
+  playerLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  baseMaterial: {fileID: 2100000, guid: 732b377764a494596a5a08638a639408, type: 2}
+  spikeMaterial: {fileID: 2100000, guid: 39d4f8fccf2874a8a8fed7ace179d1a7, type: 2}
+  warningMaterial: {fileID: 2100000, guid: 42931054312ea4bfb8ce0e80ab501fcb, type: 2}
