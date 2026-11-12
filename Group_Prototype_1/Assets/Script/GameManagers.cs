@@ -25,6 +25,10 @@ public class GameManager : MonoBehaviour
     private float fallDeathY = -45f;
     private bool restarting = false;
 
+    // True when the scene has a GoalAcorn. Then reaching the acorn wins
+    // the level and apples are only optional pickups.
+    private bool hasGoal = false;
+
     void Awake()
     {
         Instance = this;
@@ -40,6 +44,9 @@ public class GameManager : MonoBehaviour
             FindObjectsByType<Fruit>(FindObjectsSortMode.None).Length;
 
         Debug.Log("Total apples in scene: " + totalApples);
+
+        hasGoal =
+            FindObjectsByType<GoalAcorn>(FindObjectsSortMode.None).Length > 0;
 
         // Find the player.
         GameObject playerObject =
@@ -123,16 +130,27 @@ public class GameManager : MonoBehaviour
 
         UpdateAppleText();
 
-        if (applesCollected >= totalApples)
+        if (!hasGoal && applesCollected >= totalApples)
         {
             WinGame();
         }
     }
 
+    // Called by GoalAcorn when the player touches the acorn.
+    public void ReachGoal()
+    {
+        if (!gameStarted || gameWon)
+            return;
+
+        WinGame();
+    }
+
     void UpdateAppleText()
     {
-        appleText.text =
-            "Apples: " + applesCollected + "/" + totalApples;
+        // Levels without apples do not show the counter.
+        appleText.text = totalApples > 0
+            ? "Apples: " + applesCollected + "/" + totalApples
+            : "";
     }
 
     // =========================================
@@ -441,8 +459,9 @@ public class GameManager : MonoBehaviour
 
         titleText.color = Color.white;
 
-        titleText.text =
-            "COLLECT ALL APPLES!";
+        titleText.text = hasGoal
+            ? "REACH THE ACORN!"
+            : "COLLECT ALL APPLES!";
 
         RectTransform titleRect =
             titleText.rectTransform;
@@ -493,7 +512,9 @@ public class GameManager : MonoBehaviour
 
         instructionsText.text =
             "WASD - Move\n" +
-            "Q / R - Rotate\n" +
+            (hasGoal
+                ? "Space - Jump\nStep on buttons to turn the tree\n"
+                : "Q / E - Rotate\n") +
             "ESC - Pause";
 
         RectTransform instructionsRect =
@@ -512,7 +533,7 @@ public class GameManager : MonoBehaviour
             new Vector2(0, 20);
 
         instructionsRect.sizeDelta =
-            new Vector2(500, 180);
+            new Vector2(640, 200);
 
 
         // =====================================
@@ -638,7 +659,9 @@ public class GameManager : MonoBehaviour
 
         pauseInstructionsText.text =
             "WASD - Move\n" +
-            "Q / R - Rotate\n" +
+            (hasGoal
+                ? "Space - Jump\nStep on buttons to turn the tree\n"
+                : "Q / E - Rotate\n") +
             "ESC - Pause";
 
         RectTransform pauseInstructionsRect =
@@ -657,7 +680,7 @@ public class GameManager : MonoBehaviour
             new Vector2(0, 30);
 
         pauseInstructionsRect.sizeDelta =
-            new Vector2(400, 130);
+            new Vector2(560, 170);
 
 
         // =====================================
