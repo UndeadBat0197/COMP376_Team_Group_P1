@@ -1327,7 +1327,7 @@ public static class FoxyMenuBuilder
         {
             level.title = "Rotation Lab";
             level.description =
-                "Spin the cylinder with Q and E and grab every apple.";
+                "Spin the cylinder with Q and R and grab every apple.";
         }
         else
         {
@@ -1757,7 +1757,7 @@ public static class FoxyMenuBuilder
             new[] { "W", "A", "S", "D" },
             new[] { "Shift" },
             new[] { "Space" },
-            new[] { "Q", "E" },
+            new[] { "Q", "R" },
             new[] { "Esc" }
         };
 
