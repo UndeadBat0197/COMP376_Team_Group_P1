@@ -102,14 +102,14 @@ MonoBehaviour:
   Radius: 5
   Orbits:
     Top:
-      Radius: 12
-      Height: 14
+      Radius: 6.5
+      Height: 7.5
     Center:
-      Radius: 18
-      Height: 5
+      Radius: 9
+      Height: 3
     Bottom:
-      Radius: 12
-      Height: -1
+      Radius: 6.5
+      Height: 0
     SplineCurvature: 0.5
   RecenteringTarget: 2
   HorizontalAxis:
@@ -183,16 +183,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca7de3aefa901374ba29464584a3109a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineDecollider
-  CameraRadius: 0.4
+  CameraRadius: 0.15
   Decollision:
     Enabled: 1
     ObstacleLayers:
       serializedVersion: 2
       m_Bits: 1
     UseFollowTarget:
-      Enabled: 0
+      Enabled: 1
       YOffset: 0
-    Damping: 0.5
+    Damping: 0
     SmoothingTime: 0
   TerrainResolution:
     Enabled: 0
