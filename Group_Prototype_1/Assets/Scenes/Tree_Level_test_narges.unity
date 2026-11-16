@@ -13813,9 +13813,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TreeRotator
   smoothTime: 3
   maxSpeed: 20
-  halfTurnDuration: 6
+  rotationMode: 1
   turnLeftKey: 113
   turnRightKey: 114
+  halfTurnDuration: 6
+  targetLimitAngle: 90
+  targetRotationSpeed: 25
   checkpointAngle: 0
 --- !u!54 &241081004
 Rigidbody:
@@ -56868,6 +56871,7 @@ MonoBehaviour:
   slideAngle: 30
   fullyOpenAt: 0.22
   startClosingAt: 0.8
+  slideResponse: 7
 --- !u!1 &946124211
 GameObject:
   m_ObjectHideFlags: 0

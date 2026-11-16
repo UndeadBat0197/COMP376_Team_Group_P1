@@ -3,12 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|c:\\users\\narge\\onedrive\\desktop\\prototype 1\\comp376_team_group_p1\\group_prototype_1\\assets\\script\\trunk\\slidingholecover.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\script\\trunk\\slidingholecover.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|c:\\users\\narge\\onedrive\\desktop\\prototype 1\\comp376_team_group_p1\\group_prototype_1\\assets\\treelevel\\scripts\\treerotator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\treelevel\\scripts\\treerotator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\Rotation\\CylinderRotator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Script\\Rotation\\CylinderRotator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|c:\\users\\narge\\onedrive\\desktop\\prototype 1\\comp376_team_group_p1\\group_prototype_1\\assets\\script\\rotation\\cylinderrotator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\script\\rotation\\cylinderrotator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|c:\\users\\narge\\onedrive\\desktop\\prototype 1\\comp376_team_group_p1\\group_prototype_1\\assets\\script\\obstacles\\curvedlaser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -35,19 +39,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "SlidingHoleCover.cs",
+              "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\trunk\\SlidingHoleCover.cs",
+              "RelativeDocumentMoniker": "Assets\\Script\\trunk\\SlidingHoleCover.cs",
+              "ToolTip": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\trunk\\SlidingHoleCover.cs",
+              "RelativeToolTip": "Assets\\Script\\trunk\\SlidingHoleCover.cs",
+              "ViewState": "AgIAAFoAAAAAAAAAAAAcwHgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-16T04:24:44.278Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "TreeRotator.cs",
               "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\TreeLevel\\Scripts\\TreeRotator.cs",
               "RelativeDocumentMoniker": "Assets\\TreeLevel\\Scripts\\TreeRotator.cs",
               "ToolTip": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\TreeLevel\\Scripts\\TreeRotator.cs",
               "RelativeToolTip": "Assets\\TreeLevel\\Scripts\\TreeRotator.cs",
-              "ViewState": "AgIAAAQBAAAAAAAAAAAiwCIBAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAGsBAAAAAAAAAAAcwIkBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-11-15T05:48:09.907Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "ThirdPersonMovement.cs",
               "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\Player\\ThirdPersonMovement.cs",
               "RelativeDocumentMoniker": "Assets\\Script\\Player\\ThirdPersonMovement.cs",
@@ -59,7 +76,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "CurvedLaser.cs",
               "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\obstacles\\CurvedLaser.cs",
               "RelativeDocumentMoniker": "Assets\\Script\\obstacles\\CurvedLaser.cs",
@@ -67,18 +84,17 @@
               "RelativeToolTip": "Assets\\Script\\obstacles\\CurvedLaser.cs",
               "ViewState": "AgIAAGwBAAAAAAAAAAAcwIoBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-09T03:33:38.27Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-09T03:33:38.27Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "CylinderRotator.cs",
               "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\Rotation\\CylinderRotator.cs",
               "RelativeDocumentMoniker": "Assets\\Script\\Rotation\\CylinderRotator.cs",
               "ToolTip": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\Rotation\\CylinderRotator.cs",
               "RelativeToolTip": "Assets\\Script\\Rotation\\CylinderRotator.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAzAAAAAAAAAA==",
+              "ViewState": "AgIAACcAAAAAAAAAAAAiwD4AAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-11-15T05:37:29.043Z",
               "EditorCaption": ""

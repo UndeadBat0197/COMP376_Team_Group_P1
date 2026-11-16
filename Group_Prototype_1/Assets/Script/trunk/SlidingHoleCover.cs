@@ -1,34 +1,38 @@
 using UnityEngine;
 
 /// <summary>
-/// A cover that slides around a cylindrical trunk while TreeRotator performs
-/// a 180-degree turn. It is closed before/after each turn and open midway.
-/// Attach to the cube covering the hole, under the rotating Tree hierarchy.
-/// The tree's longitudinal axis must be its local Z axis.
+/// A cover that slides around the tree while a keyboard 180-degree turn runs.
+/// Supports both Automatic180 and Interruptible180; when the player reverses,
+/// the opening animation restarts in the new direction.
+/// In TargetAngle mode, holding Q or R opens the cover in that direction
+/// and releasing the key closes it again.
 /// </summary>
-[DefaultExecutionOrder(-40)] // After TreeRotator (-50), before player movement (0)
+[DefaultExecutionOrder(-40)]
 public class SlidingHoleCover : MonoBehaviour
 {
     [Header("Reference")]
     public TreeRotator treeRotator;
 
     [Header("Sliding motion")]
-    [Tooltip("How far the cover moves around the trunk surface, in degrees.")]
+    [Tooltip("How far the cover slides around the surface, in degrees.")]
     [Range(1f, 90f)] public float slideAngle = 30f;
 
-    [Tooltip("Fraction of the tree turn by which the hole is fully open.")]
+    [Tooltip("Fraction of a half-turn at which the cover is fully open.")]
     [Range(0.05f, 0.45f)] public float fullyOpenAt = 0.22f;
 
-    [Tooltip("Fraction of the tree turn when the cover starts closing.")]
+    [Tooltip("Fraction of a half-turn at which the cover starts closing.")]
     [Range(0.55f, 0.95f)] public float startClosingAt = 0.80f;
 
     private Vector3 closedPositionInTree;
     private Quaternion closedRotationInTree;
     private bool hasReference;
-
-    private bool turning;
+    private int observedTurnSequence = -1;
     private float turnStartAngle;
-    private float turnAmount;
+    private float turnEndAngle;
+    private float currentSignedOpenness;
+
+    [Tooltip("How quickly the cover opens, closes, or reverses direction (openness units/second).")]
+    [Min(0.1f)] public float slideResponse = 7f;
 
     void Start()
     {
@@ -37,14 +41,15 @@ public class SlidingHoleCover : MonoBehaviour
 
         if (treeRotator == null)
         {
-            Debug.LogError("SlidingHoleCover: Assign the rotating Tree object's TreeRotator.", this);
+            Debug.LogError("SlidingHoleCover: Assign the TreeRotator component.", this);
             enabled = false;
             return;
         }
 
-        // Store the original closed pose in the rotating tree's coordinates.
-        // This allows the cover to follow the curved surface as the tree turns.
         Transform tree = treeRotator.transform;
+        if (!transform.IsChildOf(tree))
+            Debug.LogWarning("SlidingHoleCover: For predictable collisions, place this cover under the rotating Tree in the Hierarchy.", this);
+
         closedPositionInTree = tree.InverseTransformPoint(transform.position);
         closedRotationInTree = Quaternion.Inverse(tree.rotation) * transform.rotation;
         hasReference = true;
@@ -55,28 +60,22 @@ public class SlidingHoleCover : MonoBehaviour
         if (!hasReference)
             return;
 
-        // The existing TreeRotator knows whether the tree is performing a turn.
-        // Restrict this cover to the requested 180-degree keyboard rotations;
-        // ignore the existing 90-degree floor-button turns.
-        if (!turning && treeRotator.IsTurning)
-        {
-            float pendingTurn = treeRotator.TargetAngle - treeRotator.CurrentAngle;
-            if (Mathf.Abs(pendingTurn) >= 150f)
-            {
-                turning = true;
-                turnStartAngle = treeRotator.CurrentAngle;
-                turnAmount = pendingTurn;
-            }
-        }
-
         float openness = 0f;
         float direction = 1f;
 
-        if (turning)
+        if (treeRotator.IsKeyboardHalfTurnActive)
         {
-            direction = Mathf.Sign(turnAmount);
+            if (treeRotator.KeyboardTurnSequence != observedTurnSequence)
+            {
+                observedTurnSequence = treeRotator.KeyboardTurnSequence;
+                turnStartAngle = treeRotator.KeyboardTurnStartAngle;
+                turnEndAngle = treeRotator.KeyboardTurnEndAngle;
+            }
+
+            float amount = turnEndAngle - turnStartAngle;
+            direction = Mathf.Sign(amount);
             float progress = Mathf.Clamp01(
-                (treeRotator.CurrentAngle - turnStartAngle) / turnAmount);
+                (treeRotator.CurrentAngle - turnStartAngle) / amount);
 
             float openTime = Mathf.Clamp(fullyOpenAt, 0.05f, 0.45f);
             float closeTime = Mathf.Clamp(startClosingAt, openTime + 0.05f, 0.95f);
@@ -88,30 +87,35 @@ public class SlidingHoleCover : MonoBehaviour
             else
                 openness = Mathf.SmoothStep(1f, 0f,
                     (progress - closeTime) / (1f - closeTime));
-
-            if (!treeRotator.IsTurning)
-            {
-                turning = false;
-                openness = 0f;
-            }
+        }
+        else if (treeRotator.IsTargetKeyboardActive)
+        {
+            // TargetAngle uses held-key input instead of a timed 180-degree
+            // animation. Open while Q/R is held, and close on release.
+            // Keeping this separate also handles quick Q <-> R reversals.
+            observedTurnSequence = -1;
+            direction = treeRotator.TargetKeyboardDirection;
+            openness = 1f;
+        }
+        else
+        {
+            observedTurnSequence = -1;
         }
 
-        // Rotate the cover's position around the tree's LOCAL Z axis.
-        // This is motion relative to the hole, not just rotation inherited
-        // from the parent. Q/R move the cover in opposite directions.
-        Quaternion slide = Quaternion.AngleAxis(
-            direction * slideAngle * openness, Vector3.forward);
+        // Avoid visually snapping from one side of the hole to the other
+        // when the player interrupts a 180-degree turn.
+        currentSignedOpenness = Mathf.MoveTowards(
+            currentSignedOpenness, direction * openness,
+            slideResponse * Time.deltaTime);
 
-        Transform treeTransform = treeRotator.transform;
-        Vector3 targetPosition = treeTransform.TransformPoint(
-            slide * closedPositionInTree);
-        Quaternion targetRotation = treeTransform.rotation *
-            slide * closedRotationInTree;
+        Quaternion slide = Quaternion.AngleAxis(
+            slideAngle * currentSignedOpenness, Vector3.forward);
+
+        Transform tree = treeRotator.transform;
+        Vector3 targetPosition = tree.TransformPoint(slide * closedPositionInTree);
+        Quaternion targetRotation = tree.rotation * slide * closedRotationInTree;
 
         transform.SetPositionAndRotation(targetPosition, targetRotation);
-
-        // Make moving colliders available to CharacterController queries
-        // in the same frame (also used by the existing TreeRotator).
         Physics.SyncTransforms();
     }
 }
