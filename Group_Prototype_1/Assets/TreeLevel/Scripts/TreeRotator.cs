@@ -1,49 +1,77 @@
 using UnityEngine;
 
 /// <summary>
-/// Turns the tree trunk (and everything parented to it) around its local Z axis.
-/// Q / R start a complete, uninterruptible 180-degree turn. Floor buttons still
-/// use RotateTo / TurnAndReturn; checkpoints still use HoldAt / SnapTo.
-/// Runs before the player movement script for up-to-date collider positions.
+/// Rotates the tree's local Z axis. Choose between:
+/// TargetAngle: hold Q toward +90 or R toward -90; release to stop instantly.
+/// Automatic180: each tap starts an uninterruptible 180-degree turn.
+/// Interruptible180: each tap starts a 180-degree turn; the opposite key
+///     cancels the remainder and starts a new 180-degree turn in reverse.
+/// Floor buttons, timed returns and checkpoints are still supported.
 /// </summary>
 [DefaultExecutionOrder(-50)]
 public class TreeRotator : MonoBehaviour
 {
-    [Header("Rotation")]
-    [Tooltip("Roughly how long a turn takes, in seconds.")]
+    [Header("Floor Button Rotation")]
+    [Tooltip("Smoothing time for floor-button turns only.")]
     public float smoothTime = 0.55f;
 
-    [Tooltip("Top turning speed in degrees per second.")]
+    [Tooltip("Maximum speed of floor-button turns, in degrees/second.")]
     public float maxSpeed = 140f;
 
-    [Header("Keyboard: one press = 180-degree turn")]
-    [Tooltip("Seconds required to complete the automatic 180-degree turn.")]
-    [Min(0.1f)] public float halfTurnDuration = 3f;
+    // Explicit enum values mean existing Automatic180=0 scenes retain their mode.
+    // In an older version, value 1 meant HoldToRotate; it now means TargetAngle.
+    public enum RotationMode
+    {
+        Automatic180 = 0,
+        TargetAngle = 1,
+        Interruptible180 = 2
+    }
 
-    // Renamed fields intentionally: old serialized E-key bindings from the
-    // previous version will not override these Q / R defaults.
+    [Header("Keyboard Rotation")]
+    public RotationMode rotationMode = RotationMode.Automatic180;
     public KeyCode turnLeftKey = KeyCode.Q;
     public KeyCode turnRightKey = KeyCode.R;
 
+    [Tooltip("Duration of each 180-degree turn, including turns started by reversing.")]
+    [Min(0.1f)] public float halfTurnDuration = 3f;
+
+    [Tooltip("TargetAngle mode: hold Q toward +this angle, R toward -this angle. Release to stop.")]
+    [Min(0f)] public float targetLimitAngle = 90f;
+
+    [Tooltip("TargetAngle mode: constant speed in degrees/second, with no easing delay.")]
+    [Min(0f)] public float targetRotationSpeed = 25f;
+
     [Header("Respawn")]
-    [Tooltip("Angle the trunk returns to when the player dies. " +
-             "Checkpoints update this.")]
+    [Tooltip("Checkpoints update this angle; the tree returns here upon death.")]
     public float checkpointAngle = 0f;
 
     public float CurrentAngle { get { return currentAngle; } }
     public float TargetAngle { get { return targetAngle; } }
 
+    // Exposed for SlidingHoleCover, so it can recognize interrupted turns.
+    public bool IsKeyboardHalfTurnActive { get { return keyboardTurnActive; } }
+    // Used by SlidingHoleCover for hold-to-rotate TargetAngle mode.
+    public bool IsTargetKeyboardActive { get { return targetKeyboardActive; } }
+    public int TargetKeyboardDirection { get { return targetKeyboardDirection; } }
+    public int KeyboardTurnSequence { get { return keyboardTurnSequence; } }
+    public float KeyboardTurnStartAngle { get { return keyboardTurnStart; } }
+    public float KeyboardTurnEndAngle { get { return keyboardTurnEnd; } }
+
     public bool IsTurning
     {
-        get { return keyboardTurnActive || Mathf.Abs(targetAngle - currentAngle) > 0.5f; }
+        get
+        {
+            return keyboardTurnActive || targetKeyboardActive ||
+                   Mathf.Abs(targetAngle - currentAngle) > 0.5f;
+        }
     }
 
-    /// <summary>Stops buttons or a second key press from starting another turn.</summary>
     public bool Busy
     {
         get
         {
-            return keyboardTurnActive || trapActive ||
+            return keyboardTurnActive || targetKeyboardActive ||
+                   scriptedTurnActive || trapActive ||
                    Mathf.Abs(targetAngle - currentAngle) > 0.02f ||
                    Mathf.Abs(angularVelocity) > 0.01f;
         }
@@ -52,16 +80,22 @@ public class TreeRotator : MonoBehaviour
     private float currentAngle;
     private float targetAngle;
     private float angularVelocity;
+    private Quaternion initialRotation;
 
     private bool keyboardTurnActive;
+    private bool targetKeyboardActive;
+    private int targetKeyboardDirection; // +1 for Q, -1 for R, 0 when released
+    private bool scriptedTurnActive;
     private float keyboardTurnElapsed;
     private float keyboardTurnStart;
     private float keyboardTurnEnd;
+    private int keyboardDirection; // +1 for Q, -1 for R
+    private int keyboardTurnSequence;
+    private RotationMode lastRotationMode;
 
     private bool trapActive;
     private float trapHoldLeft;
     private float trapReturnAngle;
-    private Quaternion initialRotation;
 
     private PlayerHealth playerHealth;
     private CharacterController playerController;
@@ -70,6 +104,7 @@ public class TreeRotator : MonoBehaviour
     void Awake()
     {
         initialRotation = transform.localRotation;
+        lastRotationMode = rotationMode;
     }
 
     void Start()
@@ -78,17 +113,12 @@ public class TreeRotator : MonoBehaviour
 
         if (playerHealth != null)
         {
-            playerController =
-                playerHealth.GetComponent<CharacterController>();
-
+            playerController = playerHealth.GetComponent<CharacterController>();
             playerHealth.onDied.AddListener(OnPlayerDied);
         }
 
         if (playerController == null)
-        {
-            playerController =
-                FindFirstObjectByType<CharacterController>();
-        }
+            playerController = FindFirstObjectByType<CharacterController>();
     }
 
     void OnDestroy()
@@ -102,77 +132,147 @@ public class TreeRotator : MonoBehaviour
         SnapTo(checkpointAngle);
     }
 
-    /// <summary>Ease to this angle (degrees around local Z).</summary>
+    // Existing API used by TreeButton.cs.
     public void RotateTo(float angle)
     {
-        if (keyboardTurnActive) return;
+        if (keyboardTurnActive || targetKeyboardActive)
+            return;
+
         targetAngle = angle;
+        scriptedTurnActive = true;
     }
 
-    /// <summary>
-    /// Turn to "angle", stay there for holdSeconds, then turn back to
-    /// where the trunk was. Used for trap buttons and timed doors.
-    /// </summary>
+    // Existing API for trap buttons / timed doors.
     public void TurnAndReturn(float trapAngle, float holdSeconds)
     {
-        if (trapActive || keyboardTurnActive)
+        if (Busy)
             return;
 
         trapReturnAngle = targetAngle;
         targetAngle = trapAngle;
-        trapHoldLeft = holdSeconds;
+        trapHoldLeft = Mathf.Max(0f, holdSeconds);
         trapActive = true;
+        scriptedTurnActive = true;
     }
 
-    /// <summary>
-    /// Settle on this angle and cancel any pending "turn back". Called
-    /// by checkpoints: once the player is through a timed door the tree
-    /// must not turn back. Takes the shortest way round.
-    /// </summary>
+    // Existing checkpoint API: cancel any current or pending keyboard turn.
     public void HoldAt(float angle)
     {
-        // Checkpoints take priority over any automatic key turn.
-        keyboardTurnActive = false;
-        trapActive = false;
-        angularVelocity = 0f;
+        CancelAllTurns();
         targetAngle = currentAngle + Mathf.DeltaAngle(currentAngle, angle);
+        scriptedTurnActive = true;
     }
 
-    /// <summary>Jump straight to this angle, no animation.</summary>
     public void SnapTo(float angle)
     {
-        keyboardTurnActive = false;
-        trapActive = false;
+        CancelAllTurns();
         targetAngle = angle;
         currentAngle = angle;
-        angularVelocity = 0f;
         Apply();
+    }
+
+    void CancelAllTurns()
+    {
+        keyboardTurnActive = false;
+        targetKeyboardActive = false;
+        targetKeyboardDirection = 0;
+        scriptedTurnActive = false;
+        trapActive = false;
+        angularVelocity = 0f;
+        targetAngle = currentAngle;
     }
 
     void Update()
     {
-        // One key-down event starts one complete turn. Holding a key does
-        // nothing extra, and key presses during a turn are discarded.
-        // Paused menus (timeScale = 0) cannot queue a new rotation.
-        if (Time.timeScale > 0f && !Busy)
+        if (Time.timeScale <= 0f)
+            return;
+
+        // Switching inspector modes during Play cancels keyboard motion cleanly.
+        if (lastRotationMode != rotationMode)
         {
-            if (Input.GetKeyDown(turnLeftKey))
-                BeginHalfTurn(+1f);
-            else if (Input.GetKeyDown(turnRightKey))
-                BeginHalfTurn(-1f);
+            if (keyboardTurnActive || targetKeyboardActive)
+            {
+                keyboardTurnActive = false;
+                targetKeyboardActive = false;
+                targetKeyboardDirection = 0;
+                targetAngle = currentAngle;
+                angularVelocity = 0f;
+            }
+            lastRotationMode = rotationMode;
+        }
+
+        bool leftDown = Input.GetKeyDown(turnLeftKey);
+        bool rightDown = Input.GetKeyDown(turnRightKey);
+
+        if (rotationMode == RotationMode.TargetAngle)
+        {
+            // TargetAngle is hold-to-rotate, limited to +/- targetLimitAngle.
+            // Unlike a key-down command, this stops on the release frame.
+            bool leftHeld = Input.GetKey(turnLeftKey);
+            bool rightHeld = Input.GetKey(turnRightKey);
+
+            if (leftHeld != rightHeld)
+            {
+                int direction = leftHeld ? +1 : -1;
+
+                // Keyboard can change direction instantly. A floor-button or
+                // timed-door rotation is not interrupted by keyboard input.
+                if (targetKeyboardActive || !Busy)
+                {
+                    targetKeyboardActive = true;
+                    targetKeyboardDirection = direction;
+                    targetAngle = direction * targetLimitAngle;
+                    angularVelocity = 0f;
+                }
+            }
+            else if (targetKeyboardActive)
+            {
+                // Released both keys (or both held): freeze at the exact angle.
+                targetKeyboardActive = false;
+                targetKeyboardDirection = 0;
+                targetAngle = currentAngle;
+                angularVelocity = 0f;
+            }
+        }
+        else if (leftDown != rightDown)
+        {
+            // Both 180-degree modes start on a press and continue on release.
+            int direction = leftDown ? +1 : -1;
+
+            if (rotationMode == RotationMode.Automatic180)
+            {
+                if (!Busy)
+                    BeginHalfTurn(direction);
+            }
+            else // Interruptible180
+            {
+                if (keyboardTurnActive)
+                {
+                    // Only the opposite key can interrupt a running turn.
+                    if (direction != keyboardDirection)
+                        BeginHalfTurn(direction);
+                }
+                else if (!Busy)
+                {
+                    BeginHalfTurn(direction);
+                }
+            }
         }
 
         if (keyboardTurnActive)
         {
             keyboardTurnElapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(keyboardTurnElapsed / Mathf.Max(0.1f, halfTurnDuration));
-            float easedT = Mathf.SmoothStep(0f, 1f, t);
-            currentAngle = Mathf.Lerp(keyboardTurnStart, keyboardTurnEnd, easedT);
+            float t = Mathf.Clamp01(keyboardTurnElapsed /
+                                    Mathf.Max(0.1f, halfTurnDuration));
+
+            // Lerp the unwrapped angle, so an exact 180-degree turn has
+            // no short-path ambiguity and no slow-down near the end.
+            currentAngle = Mathf.Lerp(keyboardTurnStart, keyboardTurnEnd, t);
 
             if (t >= 1f)
             {
                 currentAngle = keyboardTurnEnd;
-                targetAngle = keyboardTurnEnd;
+                targetAngle = currentAngle;
                 keyboardTurnActive = false;
                 angularVelocity = 0f;
             }
@@ -182,106 +282,109 @@ public class TreeRotator : MonoBehaviour
             return;
         }
 
+        if (targetKeyboardActive)
+        {
+            currentAngle = Mathf.MoveTowards(currentAngle, targetAngle,
+                                             targetRotationSpeed * Time.deltaTime);
+
+            if (Mathf.Abs(targetAngle - currentAngle) < 0.0001f)
+            {
+                // The tree has reached +/- the limit. Keep the held-key
+                // state until release, so the cover does not flicker closed.
+                currentAngle = targetAngle;
+                angularVelocity = 0f;
+            }
+
+            Apply();
+            PushPlayerOutOfObstacles();
+            return;
+        }
+
+        // Floor-button/timed-return logic from the existing TreeRotator.
         if (trapActive && !IsTurning)
         {
-            // Sitting in the trap position: wait, then turn back.
             trapHoldLeft -= Time.deltaTime;
-
             if (trapHoldLeft <= 0f)
             {
                 trapActive = false;
                 targetAngle = trapReturnAngle;
+                scriptedTurnActive = true;
             }
         }
 
         if (Mathf.Approximately(currentAngle, targetAngle) &&
             Mathf.Abs(angularVelocity) < 0.01f)
         {
+            if (!trapActive)
+                scriptedTurnActive = false;
             return;
         }
 
-        currentAngle = Mathf.SmoothDamp(
-            currentAngle,
-            targetAngle,
-            ref angularVelocity,
-            smoothTime,
-            maxSpeed,
-            Time.deltaTime);
+        currentAngle = Mathf.SmoothDamp(currentAngle, targetAngle,
+                                       ref angularVelocity, smoothTime,
+                                       maxSpeed, Time.deltaTime);
 
         if (Mathf.Abs(targetAngle - currentAngle) < 0.02f)
         {
             currentAngle = targetAngle;
             angularVelocity = 0f;
+            if (!trapActive)
+                scriptedTurnActive = false;
         }
 
         Apply();
         PushPlayerOutOfObstacles();
     }
 
-    void BeginHalfTurn(float direction)
+    void BeginHalfTurn(int direction)
     {
         keyboardTurnActive = true;
+        targetKeyboardActive = false;
+        targetKeyboardDirection = 0;
+        keyboardDirection = direction;
         keyboardTurnElapsed = 0f;
         keyboardTurnStart = currentAngle;
         keyboardTurnEnd = currentAngle + direction * 180f;
         targetAngle = keyboardTurnEnd;
         angularVelocity = 0f;
+        keyboardTurnSequence++;
     }
 
     void Apply()
     {
         transform.localRotation =
             initialRotation * Quaternion.Euler(0f, 0f, currentAngle);
-
-        // Update the colliders now instead of on the next physics
-        // step, so the player never collides with the old pose.
         Physics.SyncTransforms();
     }
 
-    /// <summary>
-    /// While the trunk turns, solid props attached to it sweep
-    /// sideways. If one ends up inside the player, move the player
-    /// out of it instead of letting them clip through.
-    /// </summary>
+    // Preserve overlap correction used by the original TreeRotator.
     void PushPlayerOutOfObstacles()
     {
         if (playerController == null || !playerController.enabled)
             return;
 
         Bounds bounds = playerController.bounds;
-
         int count = Physics.OverlapSphereNonAlloc(
-            bounds.center,
-            bounds.extents.magnitude,
-            overlapBuffer,
-            ~0,
-            QueryTriggerInteraction.Ignore);
+            bounds.center, bounds.extents.magnitude,
+            overlapBuffer, ~0, QueryTriggerInteraction.Ignore);
 
         for (int i = 0; i < count; i++)
         {
             Collider other = overlapBuffer[i];
-
             if (other == null || other == playerController)
                 continue;
-
             if (!other.transform.IsChildOf(transform))
                 continue;
 
-            // ComputePenetration does not support non-convex meshes
-            // (the trunk itself and the ring walls).
             MeshCollider meshCollider = other as MeshCollider;
             if (meshCollider != null && !meshCollider.convex)
                 continue;
 
             bool overlapping = Physics.ComputePenetration(
-                playerController,
-                playerController.transform.position,
+                playerController, playerController.transform.position,
                 playerController.transform.rotation,
-                other,
-                other.transform.position,
-                other.transform.rotation,
-                out Vector3 direction,
-                out float distance);
+                other, other.transform.position, other.transform.rotation,
+                out Vector3 direction, out float distance);
 
             if (overlapping && distance > 0f)
                 playerController.Move(direction * (distance + 0.02f));
