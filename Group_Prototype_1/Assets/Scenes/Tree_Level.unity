@@ -58316,7 +58316,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TreeRotator
   smoothTime: 0.55
   maxSpeed: 140
-  allowKeyboard: 0
+  allowKeyboard: 1
   keyboardSpeed: 40
   counterClockwiseKey: 113
   clockwiseKey: 101
