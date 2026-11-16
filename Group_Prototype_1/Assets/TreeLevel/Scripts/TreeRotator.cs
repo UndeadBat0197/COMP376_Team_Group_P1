@@ -1,10 +1,10 @@
 using UnityEngine;
 
 /// <summary>
-/// Turns the tree trunk (and everything parented to it) around its
-/// local Z axis. Buttons call RotateTo() or TurnAndReturn(); the trunk
-/// then eases to that angle. Runs before the player script so the player always collides
-/// with the trunk's current pose.
+/// Turns the tree trunk (and everything parented to it) around its local Z axis.
+/// Q / R start a complete, uninterruptible 180-degree turn. Floor buttons still
+/// use RotateTo / TurnAndReturn; checkpoints still use HoldAt / SnapTo.
+/// Runs before the player movement script for up-to-date collider positions.
 /// </summary>
 [DefaultExecutionOrder(-50)]
 public class TreeRotator : MonoBehaviour
@@ -16,11 +16,14 @@ public class TreeRotator : MonoBehaviour
     [Tooltip("Top turning speed in degrees per second.")]
     public float maxSpeed = 140f;
 
-    [Header("Optional keyboard control (for testing)")]
-    public bool allowKeyboard = false;
-    public float keyboardSpeed = 40f;
-    public KeyCode counterClockwiseKey = KeyCode.Q;
-    public KeyCode clockwiseKey = KeyCode.E;
+    [Header("Keyboard: one press = 180-degree turn")]
+    [Tooltip("Seconds required to complete the automatic 180-degree turn.")]
+    [Min(0.1f)] public float halfTurnDuration = 3f;
+
+    // Renamed fields intentionally: old serialized E-key bindings from the
+    // previous version will not override these Q / R defaults.
+    public KeyCode turnLeftKey = KeyCode.Q;
+    public KeyCode turnRightKey = KeyCode.R;
 
     [Header("Respawn")]
     [Tooltip("Angle the trunk returns to when the player dies. " +
@@ -32,18 +35,28 @@ public class TreeRotator : MonoBehaviour
 
     public bool IsTurning
     {
-        get { return Mathf.Abs(targetAngle - currentAngle) > 0.5f; }
+        get { return keyboardTurnActive || Mathf.Abs(targetAngle - currentAngle) > 0.5f; }
     }
 
-    /// <summary>True while turning or while a trap turn is playing.</summary>
+    /// <summary>Stops buttons or a second key press from starting another turn.</summary>
     public bool Busy
     {
-        get { return IsTurning || trapActive; }
+        get
+        {
+            return keyboardTurnActive || trapActive ||
+                   Mathf.Abs(targetAngle - currentAngle) > 0.02f ||
+                   Mathf.Abs(angularVelocity) > 0.01f;
+        }
     }
 
     private float currentAngle;
     private float targetAngle;
     private float angularVelocity;
+
+    private bool keyboardTurnActive;
+    private float keyboardTurnElapsed;
+    private float keyboardTurnStart;
+    private float keyboardTurnEnd;
 
     private bool trapActive;
     private float trapHoldLeft;
@@ -92,6 +105,7 @@ public class TreeRotator : MonoBehaviour
     /// <summary>Ease to this angle (degrees around local Z).</summary>
     public void RotateTo(float angle)
     {
+        if (keyboardTurnActive) return;
         targetAngle = angle;
     }
 
@@ -101,7 +115,7 @@ public class TreeRotator : MonoBehaviour
     /// </summary>
     public void TurnAndReturn(float trapAngle, float holdSeconds)
     {
-        if (trapActive)
+        if (trapActive || keyboardTurnActive)
             return;
 
         trapReturnAngle = targetAngle;
@@ -117,13 +131,17 @@ public class TreeRotator : MonoBehaviour
     /// </summary>
     public void HoldAt(float angle)
     {
+        // Checkpoints take priority over any automatic key turn.
+        keyboardTurnActive = false;
         trapActive = false;
+        angularVelocity = 0f;
         targetAngle = currentAngle + Mathf.DeltaAngle(currentAngle, angle);
     }
 
     /// <summary>Jump straight to this angle, no animation.</summary>
     public void SnapTo(float angle)
     {
+        keyboardTurnActive = false;
         trapActive = false;
         targetAngle = angle;
         currentAngle = angle;
@@ -133,13 +151,35 @@ public class TreeRotator : MonoBehaviour
 
     void Update()
     {
-        if (allowKeyboard)
+        // One key-down event starts one complete turn. Holding a key does
+        // nothing extra, and key presses during a turn are discarded.
+        // Paused menus (timeScale = 0) cannot queue a new rotation.
+        if (Time.timeScale > 0f && !Busy)
         {
-            float input = 0f;
-            if (Input.GetKey(counterClockwiseKey)) input += 1f;
-            if (Input.GetKey(clockwiseKey)) input -= 1f;
+            if (Input.GetKeyDown(turnLeftKey))
+                BeginHalfTurn(+1f);
+            else if (Input.GetKeyDown(turnRightKey))
+                BeginHalfTurn(-1f);
+        }
 
-            targetAngle += input * keyboardSpeed * Time.deltaTime;
+        if (keyboardTurnActive)
+        {
+            keyboardTurnElapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(keyboardTurnElapsed / Mathf.Max(0.1f, halfTurnDuration));
+            float easedT = Mathf.SmoothStep(0f, 1f, t);
+            currentAngle = Mathf.Lerp(keyboardTurnStart, keyboardTurnEnd, easedT);
+
+            if (t >= 1f)
+            {
+                currentAngle = keyboardTurnEnd;
+                targetAngle = keyboardTurnEnd;
+                keyboardTurnActive = false;
+                angularVelocity = 0f;
+            }
+
+            Apply();
+            PushPlayerOutOfObstacles();
+            return;
         }
 
         if (trapActive && !IsTurning)
@@ -176,6 +216,16 @@ public class TreeRotator : MonoBehaviour
 
         Apply();
         PushPlayerOutOfObstacles();
+    }
+
+    void BeginHalfTurn(float direction)
+    {
+        keyboardTurnActive = true;
+        keyboardTurnElapsed = 0f;
+        keyboardTurnStart = currentAngle;
+        keyboardTurnEnd = currentAngle + direction * 180f;
+        targetAngle = keyboardTurnEnd;
+        angularVelocity = 0f;
     }
 
     void Apply()
