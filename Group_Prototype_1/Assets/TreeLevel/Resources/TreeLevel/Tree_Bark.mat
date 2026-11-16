@@ -25,14 +25,23 @@ Material:
     m_TexEnvs:
     - _BaseMap:
         m_Texture: {fileID: 2800000, guid: b1061994482aa1999f192e59aabe9eaf, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: 0.2, y: 0.2}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AmbientStrength: 0.35
     - _Cull: 2
+    - _OutlineWidth: 0
+    - _RampSmooth: 0.03
+    - _RampThreshold: 0.5
+    - _RimPower: 0.7
+    - _RimStrength: 0.15
     - _Triplanar: 0
+    - _TriplanarScale: 0.25
     m_Colors:
     - _BaseColor: {r: 0.5, g: 0.29, b: 0.16, a: 1}
+    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadeColor: {r: 0.6, g: 0.42, b: 0.5, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

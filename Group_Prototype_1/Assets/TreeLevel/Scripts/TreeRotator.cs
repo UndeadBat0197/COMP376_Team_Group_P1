@@ -18,6 +18,16 @@ public class TreeRotator : MonoBehaviour
     [Tooltip("Maximum speed of floor-button turns, in degrees/second.")]
     public float maxSpeed = 140f;
 
+
+    public enum RotationAxis
+    {
+        X,
+        Y,
+        Z
+    }
+    [Header("Rotation Axis")]
+    public RotationAxis rotationAxis = RotationAxis.Z;
+
     // Explicit enum values mean existing Automatic180=0 scenes retain their mode.
     // In an older version, value 1 meant HoldToRotate; it now means TargetAngle.
     public enum RotationMode
@@ -35,8 +45,12 @@ public class TreeRotator : MonoBehaviour
     [Tooltip("Duration of each 180-degree turn, including turns started by reversing.")]
     [Min(0.1f)] public float halfTurnDuration = 3f;
 
+    [Tooltip("Enable a maximum rotation angle.")]
+    public bool useRotationLimit = true;
+
     [Tooltip("TargetAngle mode: hold Q toward +this angle, R toward -this angle. Release to stop.")]
     [Min(0f)] public float targetLimitAngle = 90f;
+
 
     [Tooltip("TargetAngle mode: constant speed in degrees/second, with no easing delay.")]
     [Min(0f)] public float targetRotationSpeed = 25f;
@@ -221,7 +235,14 @@ public class TreeRotator : MonoBehaviour
                 {
                     targetKeyboardActive = true;
                     targetKeyboardDirection = direction;
-                    targetAngle = direction * targetLimitAngle;
+                    if (useRotationLimit)
+                    {
+                        targetAngle = direction * targetLimitAngle;
+                    }
+                    else
+                    {
+                        targetAngle = direction * 1000000f;
+                    }
                     angularVelocity = 0f;
                 }
             }
@@ -352,8 +373,26 @@ public class TreeRotator : MonoBehaviour
 
     void Apply()
     {
+        Vector3 axis = Vector3.zero;
+
+        switch (rotationAxis)
+        {
+            case RotationAxis.X:
+                axis = Vector3.right;
+                break;
+
+            case RotationAxis.Y:
+                axis = Vector3.up;
+                break;
+
+            case RotationAxis.Z:
+                axis = Vector3.forward;
+                break;
+        }
+
         transform.localRotation =
-            initialRotation * Quaternion.Euler(0f, 0f, currentAngle);
+            initialRotation * Quaternion.AngleAxis(currentAngle, axis);
+
         Physics.SyncTransforms();
     }
 
