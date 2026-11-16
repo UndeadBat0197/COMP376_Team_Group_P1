@@ -1,26 +1,24 @@
-
 using UnityEngine;
 
-// Runs before the player script, so the player always moves against
-// the cylinder's new rotation instead of last frame's.
+// One key press starts one complete, non-interruptible rotation.
+// Runs before the player's movement so collision checks use the new orientation.
 [DefaultExecutionOrder(-50)]
 public class CylinderRotator : MonoBehaviour
 {
     [Header("Rotation Settings")]
-    public float rotationSpeed = 25f;   // degrees per second while a key is held
-    public float maxAngle = 90f;        // limit in each direction from the start rotation
-
-    [Tooltip("How quickly the rotation speeds up and slows down (degrees/s²). " +
-             "Lower = softer start and stop.")]
-    public float rotationAcceleration = 120f;
+    [Min(1f)] public float degreesPerTurn = 180f;
+    [Min(0.05f)] public float turnDuration = 3f;
 
     [Header("Controls")]
     public KeyCode counterClockwiseKey = KeyCode.Q;
-    public KeyCode clockwiseKey = KeyCode.E;
+    public KeyCode clockwiseKey = KeyCode.R;
 
-    private float currentAngle = 0f;
-    private float currentSpeed = 0f;
     private Quaternion initialRotation;
+    private float currentAngle;
+    private float startAngle;
+    private float targetAngle;
+    private float elapsed;
+    private bool isRotating;
 
     void Start()
     {
@@ -29,41 +27,43 @@ public class CylinderRotator : MonoBehaviour
 
     void Update()
     {
-        // -1, 0 or +1 depending on which key is held this frame
-        float input = 0f;
-        if (Input.GetKey(counterClockwiseKey)) input += 1f;
-        if (Input.GetKey(clockwiseKey))        input -= 1f;
-
-        // Ease in and out instead of starting/stopping instantly.
-        currentSpeed = Mathf.MoveTowards(
-            currentSpeed,
-            input * rotationSpeed,
-            rotationAcceleration * Time.deltaTime);
-
-        float previousAngle = currentAngle;
-
-        currentAngle += currentSpeed * Time.deltaTime;
-        currentAngle = Mathf.Clamp(currentAngle, -maxAngle, maxAngle);
-
-        // Stop pushing against the limit.
-        if (Mathf.Approximately(Mathf.Abs(currentAngle), maxAngle) &&
-            Mathf.Sign(currentSpeed) == Mathf.Sign(currentAngle))
-        {
-            currentSpeed = 0f;
-        }
-
-        if (Mathf.Approximately(previousAngle, currentAngle))
+        // Do not accept rotation commands while the game is paused.
+        if (Time.timeScale <= 0f)
             return;
 
-        // Rotate around the cylinder's local Z axis
-        transform.localRotation =
-            initialRotation *
-            Quaternion.Euler(0f, 0f, currentAngle);
+        if (!isRotating)
+        {
+            // GetKeyDown fires once, regardless of how long a key is held.
+            // Commands during an ongoing rotation are ignored.
+            bool turnLeft = Input.GetKeyDown(counterClockwiseKey);
+            bool turnRight = Input.GetKeyDown(clockwiseKey);
 
-        // Colliders moved through the Transform are normally only
-        // updated on the next physics step. Updating them now stops the
-        // CharacterController from colliding with where the cylinder
-        // and platforms used to be, which made the player jitter.
+            if (turnLeft != turnRight)
+            {
+                startAngle = currentAngle;
+                targetAngle = currentAngle + (turnLeft ? degreesPerTurn : -degreesPerTurn);
+                elapsed = 0f;
+                isRotating = true;
+            }
+        }
+
+        if (!isRotating)
+            return;
+
+        elapsed += Time.deltaTime;
+        float t = Mathf.Clamp01(elapsed / Mathf.Max(0.05f, turnDuration));
+
+        // Interpolate unwrapped angle values: never use LerpAngle for exact 180-degree turns.
+        currentAngle = Mathf.Lerp(startAngle, targetAngle, t);
+        transform.localRotation = initialRotation * Quaternion.Euler(0f, 0f, currentAngle);
+
+        // Keep collider transforms in sync with CharacterController movement.
         Physics.SyncTransforms();
+
+        if (t >= 1f)
+        {
+            currentAngle = targetAngle;
+            isRotating = false;
+        }
     }
 }
