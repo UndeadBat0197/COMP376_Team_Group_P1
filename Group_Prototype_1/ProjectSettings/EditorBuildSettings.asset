@@ -17,5 +17,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Tree_Level.unity
     guid: de74e85efc983299e1eac2390c861755
+  - enabled: 1
+    path: Assets/Scenes/Level_Thorn_Maze.unity
+    guid: 1d52f02097e6da844a8fe24b8990b5ca
+  - enabled: 1
+    path: Assets/Scenes/max/GetOver_level_2_by max.unity
+    guid: a660003b1adf692439dcda96f893fd50
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
