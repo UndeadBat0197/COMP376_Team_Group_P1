@@ -3,6 +3,26 @@
   "WorkspaceRootPath": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\NearestRespawn.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Script\\NearestRespawn.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|c:\\users\\narge\\onedrive\\desktop\\prototype 1\\comp376_team_group_p1\\group_prototype_1\\assets\\thornfullwallv2\\runtime\\thornbridgeoverheadshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\thornfullwallv2\\runtime\\thornbridgeoverheadshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|c:\\users\\narge\\onedrive\\desktop\\prototype 1\\comp376_team_group_p1\\group_prototype_1\\assets\\script\\gamemanagers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\script\\gamemanagers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|c:\\users\\narge\\onedrive\\desktop\\prototype 1\\comp376_team_group_p1\\group_prototype_1\\assets\\script\\trunk\\trunklayoutswap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\script\\trunk\\trunklayoutswap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|c:\\users\\narge\\onedrive\\desktop\\prototype 1\\comp376_team_group_p1\\group_prototype_1\\assets\\script\\obstacles\\walldamageonhit.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\script\\obstacles\\walldamageonhit.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|c:\\users\\narge\\onedrive\\desktop\\prototype 1\\comp376_team_group_p1\\group_prototype_1\\assets\\script\\trunk\\slidingholecover.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\script\\trunk\\slidingholecover.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -30,7 +50,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -38,20 +58,44 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
+              "Title": "ThornBridgeOverheadShot.cs",
+              "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\ThornFullWallV2\\Runtime\\ThornBridgeOverheadShot.cs",
+              "RelativeDocumentMoniker": "Assets\\ThornFullWallV2\\Runtime\\ThornBridgeOverheadShot.cs",
+              "ToolTip": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\ThornFullWallV2\\Runtime\\ThornBridgeOverheadShot.cs",
+              "RelativeToolTip": "Assets\\ThornFullWallV2\\Runtime\\ThornBridgeOverheadShot.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAO8AAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-18T10:06:01.051Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "TrunkLayoutSwap.cs",
+              "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\trunk\\TrunkLayoutSwap.cs",
+              "RelativeDocumentMoniker": "Assets\\Script\\trunk\\TrunkLayoutSwap.cs",
+              "ToolTip": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\trunk\\TrunkLayoutSwap.cs",
+              "RelativeToolTip": "Assets\\Script\\trunk\\TrunkLayoutSwap.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-18T09:47:21.407Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "SlidingHoleCover.cs",
               "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\trunk\\SlidingHoleCover.cs",
               "RelativeDocumentMoniker": "Assets\\Script\\trunk\\SlidingHoleCover.cs",
               "ToolTip": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\trunk\\SlidingHoleCover.cs",
               "RelativeToolTip": "Assets\\Script\\trunk\\SlidingHoleCover.cs",
-              "ViewState": "AgIAAFoAAAAAAAAAAAAcwHgAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAFoAAAAAAAAAAAAcwF8AAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-16T04:24:44.278Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-16T04:24:44.278Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 6,
               "Title": "TreeRotator.cs",
               "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\TreeLevel\\Scripts\\TreeRotator.cs",
               "RelativeDocumentMoniker": "Assets\\TreeLevel\\Scripts\\TreeRotator.cs",
@@ -59,12 +103,11 @@
               "RelativeToolTip": "Assets\\TreeLevel\\Scripts\\TreeRotator.cs",
               "ViewState": "AgIAAGsBAAAAAAAAAAAcwIkBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-15T05:48:09.907Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-15T05:48:09.907Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 9,
               "Title": "ThirdPersonMovement.cs",
               "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\Player\\ThirdPersonMovement.cs",
               "RelativeDocumentMoniker": "Assets\\Script\\Player\\ThirdPersonMovement.cs",
@@ -76,7 +119,44 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
+              "Title": "NearestRespawn.cs",
+              "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\NearestRespawn.cs",
+              "RelativeDocumentMoniker": "Assets\\Script\\NearestRespawn.cs",
+              "ToolTip": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\NearestRespawn.cs",
+              "RelativeToolTip": "Assets\\Script\\NearestRespawn.cs",
+              "ViewState": "AgIAAKYAAAAAAAAAAAAmwN0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-18T15:32:16.12Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "WallDamageOnHit.cs",
+              "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\obstacles\\WallDamageOnHit.cs",
+              "RelativeDocumentMoniker": "Assets\\Script\\obstacles\\WallDamageOnHit.cs",
+              "ToolTip": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\obstacles\\WallDamageOnHit.cs",
+              "RelativeToolTip": "Assets\\Script\\obstacles\\WallDamageOnHit.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-18T09:47:46.571Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "GameManagers.cs",
+              "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\GameManagers.cs",
+              "RelativeDocumentMoniker": "Assets\\Script\\GameManagers.cs",
+              "ToolTip": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\GameManagers.cs",
+              "RelativeToolTip": "Assets\\Script\\GameManagers.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-18T10:03:44.73Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "CurvedLaser.cs",
               "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\obstacles\\CurvedLaser.cs",
               "RelativeDocumentMoniker": "Assets\\Script\\obstacles\\CurvedLaser.cs",
@@ -88,7 +168,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 7,
               "Title": "CylinderRotator.cs",
               "DocumentMoniker": "C:\\Users\\Narge\\OneDrive\\Desktop\\prototype 1\\COMP376_Team_Group_P1\\Group_Prototype_1\\Assets\\Script\\Rotation\\CylinderRotator.cs",
               "RelativeDocumentMoniker": "Assets\\Script\\Rotation\\CylinderRotator.cs",
@@ -96,8 +176,7 @@
               "RelativeToolTip": "Assets\\Script\\Rotation\\CylinderRotator.cs",
               "ViewState": "AgIAACcAAAAAAAAAAAAiwD4AAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-15T05:37:29.043Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-15T05:37:29.043Z"
             }
           ]
         }
