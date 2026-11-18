@@ -46,10 +46,7 @@ public class ThornFullBridgeButton : MonoBehaviour
         if (bridge != null) bridge.SetActive(false);
     }
 
-    private void OnEnable()
-    {
-        if (playerHealth != null) playerHealth.onDied.AddListener(ResetBridge);
-    }
+
 
     private void Start()
     {
@@ -62,10 +59,6 @@ public class ThornFullBridgeButton : MonoBehaviour
             Debug.LogError("[Thorn Button] Fox CharacterController not assigned or found.", this);
     }
 
-    private void OnDisable()
-    {
-        if (playerHealth != null) playerHealth.onDied.RemoveListener(ResetBridge);
-    }
 
     private void Update()
     {

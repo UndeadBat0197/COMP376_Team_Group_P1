@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
 
     private Transform player;
 
-    private float fallDeathY = -45f;
+    private float fallDeathY = -30f;
     private bool restarting = false;
 
     // True when the scene has a GoalAcorn. Then reaching the acorn wins
@@ -90,14 +90,21 @@ public class GameManager : MonoBehaviour
         if (!gameStarted)
             return;
 
-        // Restart if the player falls below the map.
+        // Respawn at the activated checkpoint
+        // when the fox falls below the map.
         if (player != null &&
             player.position.y < fallDeathY &&
-            !restarting &&
             !gameWon)
         {
-            restarting = true;
-            RestartGame();
+            PlayerHealth health = player.GetComponent<PlayerHealth>();
+
+            if (health != null && !health.IsDead)
+            {
+                // A lethal hit triggers onDied, allowing
+                // NearestRespawn to select the checkpoint.
+                health.TakeDamage(health.maxHealth);
+            }
+
             return;
         }
 

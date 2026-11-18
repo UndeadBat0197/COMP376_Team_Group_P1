@@ -14,7 +14,8 @@ public class TreeRotator : MonoBehaviour
     [Header("Floor Button Rotation")]
     [Tooltip("Smoothing time for floor-button turns only.")]
     public float smoothTime = 0.55f;
-
+    [Header("Collision Correction")]
+    public bool enablePlayerPush = true;
     [Tooltip("Maximum speed of floor-button turns, in degrees/second.")]
     public float maxSpeed = 140f;
 
@@ -299,7 +300,8 @@ public class TreeRotator : MonoBehaviour
             }
 
             Apply();
-            PushPlayerOutOfObstacles();
+            if (enablePlayerPush)
+                PushPlayerOutOfObstacles();
             return;
         }
 
@@ -317,7 +319,8 @@ public class TreeRotator : MonoBehaviour
             }
 
             Apply();
-            PushPlayerOutOfObstacles();
+            if (enablePlayerPush)
+                PushPlayerOutOfObstacles();
             return;
         }
 
@@ -354,7 +357,8 @@ public class TreeRotator : MonoBehaviour
         }
 
         Apply();
-        PushPlayerOutOfObstacles();
+        if (enablePlayerPush)
+            PushPlayerOutOfObstacles();
     }
 
     void BeginHalfTurn(int direction)

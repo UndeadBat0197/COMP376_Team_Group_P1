@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Rendering.Universal;
 
 /// <summary>
@@ -26,6 +27,19 @@ public class ThornBridgeOverheadShot : MonoBehaviour
     [Min(0.2f)] public float holdSeconds = 2.5f;
     [Tooltip("World-space offset from the LEFT bridge toward the center of the gap.")]
     public Vector3 lookTargetOffset = new Vector3(3f, 0f, 0f);
+
+    [Header("Exit hole reveal (second shot)")]
+    [Tooltip("Stationary empty GameObject positioned to film the END pipe from below, before and after the swap. Parent it under World (does not turn).")]
+    public Transform exitShotView;
+
+    [Range(25f, 90f)] public float exitShotFieldOfView = 50f;
+    [Min(0f)] public float showSolidWallSeconds = 0.8f;
+    [Min(0f)] public float showOpenedHoleSeconds = 1.7f;
+
+    [Header("Scene change — assigned in Inspector")]
+    [InspectorName("On Exit Shot - Swap Trunks")]
+    [Tooltip("Connect TRUNK LAYOUT SWITCH -> TrunkLayoutSwap.SwapToExitLayout(). This is invoked only once the second camera shot is looking at the solid END pipe.")]
+    public UnityEvent onBridgeRevealed;
 
     private Camera shotCamera;
     private Coroutine shotRoutine;
@@ -109,6 +123,32 @@ public class ThornBridgeOverheadShot : MonoBehaviour
         yield return FlyTo(destination, lookingDown, overheadFieldOfView, travelSeconds);
         Debug.Log("[Bridge Camera] Showing top-down view of LEFT gap platform.", this);
         yield return new WaitForSecondsRealtime(holdSeconds);
+
+        // Cut to a second, stationary viewpoint BELOW the last joined pipe.
+        // IMPORTANT: do not swap the trunk while the camera is still on the bridge.
+        if (exitShotView != null)
+        {
+            transform.SetPositionAndRotation(exitShotView.position, exitShotView.rotation);
+            shotCamera.fieldOfView = exitShotFieldOfView;
+
+            // Film the solid pipe first: viewers see that there was NO opening.
+            Debug.Log("[Bridge Camera] EXIT SHOT: showing solid wall BEFORE swap.", this);
+            yield return new WaitForSecondsRealtime(showSolidWallSeconds);
+
+            // The existing level-switch callback is preserved by retaining its
+            // serialized field name, onBridgeRevealed. Its timing is now correct.
+            Debug.Log("[Bridge Camera] EXIT SHOT: swapping trunks now.", this);
+            onBridgeRevealed?.Invoke();
+            Physics.SyncTransforms();
+
+            // Hold on the exact same camera framing as the hole/stairs appear.
+            yield return new WaitForSecondsRealtime(showOpenedHoleSeconds);
+        }
+        else
+        {
+            // Fail visibly instead of secretly swapping during the bridge shot.
+            Debug.LogWarning("[Bridge Camera] Exit Shot View is unassigned. No trunk swap was triggered; assign an EXIT SHOT POINT Transform in the Inspector.", this);
+        }
 
         // Follow the live camera's current pose so the transition returns to
         // the fox even if Cinemachine moved while the cutaway was playing.
