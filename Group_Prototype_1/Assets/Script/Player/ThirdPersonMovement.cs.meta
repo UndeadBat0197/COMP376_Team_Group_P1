@@ -1,2 +1,18 @@
 fileFormatVersion: 2
 guid: 372291f44fbccb147919be0de0111457
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - controller: {instanceID: 0}
+  - cam: {instanceID: 0}
+  - foxAnimator: {instanceID: 0}
+  - model: {instanceID: 0}
+  - movementAudio: {instanceID: 0}
+  - footstepSound: {fileID: 8300000, guid: d91afe8ac4563482b8552c199161198d, type: 3}
+  - jumpSound: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
