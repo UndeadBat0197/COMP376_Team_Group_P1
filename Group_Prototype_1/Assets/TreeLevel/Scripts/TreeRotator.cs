@@ -39,7 +39,6 @@ public class TreeRotator : MonoBehaviour
     }
 
     [Header("Keyboard Rotation")]
-    public bool disablePlayerInput = false;
     public RotationMode rotationMode = RotationMode.Automatic180;
     public KeyCode turnLeftKey = KeyCode.Q;
     public KeyCode turnRightKey = KeyCode.R;
@@ -217,82 +216,67 @@ public class TreeRotator : MonoBehaviour
             lastRotationMode = rotationMode;
         }
 
-        if (disablePlayerInput)
+        bool leftDown = Input.GetKeyDown(turnLeftKey);
+        bool rightDown = Input.GetKeyDown(turnRightKey);
+
+        if (rotationMode == RotationMode.TargetAngle)
         {
-            if (keyboardTurnActive || targetKeyboardActive)
+            // TargetAngle is hold-to-rotate, limited to +/- targetLimitAngle.
+            // Unlike a key-down command, this stops on the release frame.
+            bool leftHeld = Input.GetKey(turnLeftKey);
+            bool rightHeld = Input.GetKey(turnRightKey);
+
+            if (leftHeld != rightHeld)
             {
-                keyboardTurnActive = false;
+                int direction = leftHeld ? +1 : -1;
+
+                // Keyboard can change direction instantly. A floor-button or
+                // timed-door rotation is not interrupted by keyboard input.
+                if (targetKeyboardActive || !Busy)
+                {
+                    targetKeyboardActive = true;
+                    targetKeyboardDirection = direction;
+                    if (useRotationLimit)
+                    {
+                        targetAngle = direction * targetLimitAngle;
+                    }
+                    else
+                    {
+                        targetAngle = direction * 1000000f;
+                    }
+                    angularVelocity = 0f;
+                }
+            }
+            else if (targetKeyboardActive)
+            {
+                // Released both keys (or both held): freeze at the exact angle.
                 targetKeyboardActive = false;
                 targetKeyboardDirection = 0;
                 targetAngle = currentAngle;
                 angularVelocity = 0f;
             }
         }
-        else
+        else if (leftDown != rightDown)
         {
+            // Both 180-degree modes start on a press and continue on release.
+            int direction = leftDown ? +1 : -1;
 
-            bool leftDown = Input.GetKeyDown(turnLeftKey);
-            bool rightDown = Input.GetKeyDown(turnRightKey);
-
-            if (rotationMode == RotationMode.TargetAngle)
+            if (rotationMode == RotationMode.Automatic180)
             {
-                // TargetAngle is hold-to-rotate, limited to +/- targetLimitAngle.
-                // Unlike a key-down command, this stops on the release frame.
-                bool leftHeld = Input.GetKey(turnLeftKey);
-                bool rightHeld = Input.GetKey(turnRightKey);
-
-                if (leftHeld != rightHeld)
-                {
-                    int direction = leftHeld ? +1 : -1;
-
-                    // Keyboard can change direction instantly. A floor-button or
-                    // timed-door rotation is not interrupted by keyboard input.
-                    if (targetKeyboardActive || !Busy)
-                    {
-                        targetKeyboardActive = true;
-                        targetKeyboardDirection = direction;
-                        if (useRotationLimit)
-                        {
-                            targetAngle = direction * targetLimitAngle;
-                        }
-                        else
-                        {
-                            targetAngle = direction * 1000000f;
-                        }
-                        angularVelocity = 0f;
-                    }
-                }
-                else if (targetKeyboardActive)
-                {
-                    // Released both keys (or both held): freeze at the exact angle.
-                    targetKeyboardActive = false;
-                    targetKeyboardDirection = 0;
-                    targetAngle = currentAngle;
-                    angularVelocity = 0f;
-                }
+                if (!Busy)
+                    BeginHalfTurn(direction);
             }
-            else if (leftDown != rightDown)
+            else // Interruptible180
             {
-                // Both 180-degree modes start on a press and continue on release.
-                int direction = leftDown ? +1 : -1;
-
-                if (rotationMode == RotationMode.Automatic180)
+                if (keyboardTurnActive)
                 {
-                    if (!Busy)
+                    // Only the opposite key can interrupt a running turn.
+                    if (direction != keyboardDirection)
                         BeginHalfTurn(direction);
                 }
-                else // Interruptible180
+                else if (!Busy)
                 {
-                    if (keyboardTurnActive)
-                    {
-                        // Only the opposite key can interrupt a running turn.
-                        if (direction != keyboardDirection)
-                            BeginHalfTurn(direction);
-                    }
-                    else if (!Busy)
-                    {
-                        BeginHalfTurn(direction);
-                    }
+                    BeginHalfTurn(direction);
                 }
             }
         }
