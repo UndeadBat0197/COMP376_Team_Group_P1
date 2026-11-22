@@ -42,7 +42,7 @@ public class TreeRotator : MonoBehaviour
     public bool disablePlayerInput = false;
     public RotationMode rotationMode = RotationMode.Automatic180;
     public KeyCode turnLeftKey = KeyCode.Q;
-    public KeyCode turnRightKey = KeyCode.E;
+    public KeyCode turnRightKey = KeyCode.R;
 
     [Tooltip("Duration of each 180-degree turn, including turns started by reversing.")]
     [Min(0.1f)] public float halfTurnDuration = 3f;
