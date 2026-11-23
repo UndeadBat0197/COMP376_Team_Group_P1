@@ -58447,9 +58447,10 @@ MonoBehaviour:
   enablePlayerPush: 1
   maxSpeed: 140
   rotationAxis: 2
+  disablePlayerInput: 1
   rotationMode: 0
   turnLeftKey: 113
-  turnRightKey: 114
+  turnRightKey: 101
   halfTurnDuration: 3
   useRotationLimit: 1
   targetLimitAngle: 90

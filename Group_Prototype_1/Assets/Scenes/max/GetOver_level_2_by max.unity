@@ -1323,15 +1323,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6140896501551550590, guid: ded2d854ff529aa4cbb96bb5c51d9376, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.0305724
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6140896501551550590, guid: ded2d854ff529aa4cbb96bb5c51d9376, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 26.56
+      value: 27
       objectReference: {fileID: 0}
     - target: {fileID: 6140896501551550590, guid: ded2d854ff529aa4cbb96bb5c51d9376, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -43.19
+      value: -45
       objectReference: {fileID: 0}
     - target: {fileID: 6140896501551550590, guid: ded2d854ff529aa4cbb96bb5c51d9376, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4529,7 +4529,7 @@ Transform:
   m_GameObject: {fileID: 1420518158}
   serializedVersion: 2
   m_LocalRotation: {x: 0.1601823, y: 0.000000029417507, z: -0.000000004773806, w: 0.9870875}
-  m_LocalPosition: {x: 5.0305724, y: 29.56, z: -52.19}
+  m_LocalPosition: {x: 0, y: 30, z: -54}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8588,11 +8588,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TreeRotator
   smoothTime: 0.55
+  enablePlayerPush: 1
   maxSpeed: 140
   rotationAxis: 1
+  disablePlayerInput: 0
   rotationMode: 1
   turnLeftKey: 113
-  turnRightKey: 114
+  turnRightKey: 101
   halfTurnDuration: 3
   useRotationLimit: 1
   targetLimitAngle: 90
@@ -8790,15 +8792,15 @@ PrefabInstance:
       objectReference: {fileID: 1687734751}
     - target: {fileID: 8581768346924338564, guid: 626d584837db92b4e85b75f4e7615798, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.0305724
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8581768346924338564, guid: 626d584837db92b4e85b75f4e7615798, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 29.56
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 8581768346924338564, guid: 626d584837db92b4e85b75f4e7615798, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -52.19
+      value: -54
       objectReference: {fileID: 0}
     - target: {fileID: 8581768346924338564, guid: 626d584837db92b4e85b75f4e7615798, type: 3}
       propertyPath: m_LocalRotation.w
